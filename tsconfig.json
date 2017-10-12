@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "es2015",
+        "module": "commonjs",
+        "sourceMap": true,
+        "outDir": "./public",
+        "experimentalDecorators": true
+    },
+    "exclude": [
+        "node_modules"
+      ],    
+    "include": [
+        "./s-lib",
+        "./s-app/*",
+        "./s-test/*"
+    ],
+    "compileOnSave": true
+}

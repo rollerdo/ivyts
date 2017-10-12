@@ -1,0 +1,36 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "taskName": "Typescript compiler",
+            "type": "shell",
+            "command": "tsc",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "taskName": "Start Server",
+            "type": "shell",
+            "command": "node public/s-app/server.js"
+        },
+        {
+            "taskName": "Typescript Compiler (Watch)",
+            "type": "shell",
+            "command": "tsc --watch"
+        },
+        {
+            "taskName": "Webpack",
+            "type": "shell",
+            "command": "webpack --watch"
+        },
+        {
+            "taskName": "Webpack (Watch)",
+            "type": "shell",
+            "command": "webpack --watch"
+        }
+    ]
+}

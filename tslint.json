@@ -1,0 +1,31 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {
+        "max-classes-per-file":false,
+        "one-variable-per-declaration":false,
+        "semicolon":[true,"always"],
+        "object-literal-shorthand":false,
+        "space-before-function-paren":false,
+        "no-console":false
+    },
+    "rules": {
+        "trailing-comma":false,
+        "no-empty": false,
+        "no-bitwise": false,
+        "only-arrow-functions":false,
+        "max-classes-per-file":false,
+        "semicolon":[true,"always"],
+        "one-variable-per-declaration":false,
+        "space-before-function-paren":false,
+        "object-literal-shorthand":false,
+        "no-console":false,
+        "variable-name":false,
+        "no-unused-variable":true,
+        "forin":false,
+        "member-ordering":false
+    },
+    "rulesDirectory": []
+}

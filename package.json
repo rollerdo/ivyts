@@ -1,0 +1,23 @@
+{
+  "name": "ivyts",
+  "version": "1.0.0",
+  "description": "Ivy Typescript",
+  "main": "index.js",
+  "scripts": {
+    "test": "test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "local"
+  },
+  "author": "Doug Roller",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.0.37",
+    "express": "^4.16.1",
+    "ts-loader": "^2.3.7"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.33"
+  }
+}

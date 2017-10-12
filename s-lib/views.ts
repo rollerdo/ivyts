@@ -1,0 +1,509 @@
+import { $Any, $Boolean, $Complex, $Object, $Property, $String } from "./ivy";
+import { foreachProp } from "./utils";
+
+export abstract class HtmlElement extends $Object {
+
+    private _oldDisplay: string;
+    protected _elem;
+
+    constructor(owner) {
+        super(owner);
+        this.on("created", () => {
+            this._elem = this.createElement();
+            this.hidden.value = false;
+        });
+
+    }
+
+    // Encapsulates the document model's appendChild
+    public appendChild(inst) {
+        // Since pro.elem is a protected variable, we don't have direct access to it via inst. We can,
+        // however, fire an accessRequest event, passing the name of the member of the protected variable
+        // (in this case "elem") which is returned in event.value.
+        this._elem.appendChild(inst._elem);
+    }
+
+    public focus() {
+        this._elem.focus();
+    }
+
+    // Insert passes the document element into which we want to insert our view. This is NOT an ivy object
+    // but a normal HTML document element, so we pass it the pointer to our document element.
+    public insert(parentElem) {
+        parentElem.appendChild(this._elem);
+    }
+
+    public hideable() {
+        return (this._elem.childNodes.length > 0);
+    }
+
+    public hidden = new $Boolean(this);
+
+    // Retrieve an attribute from the document element by its name
+    public getAttribute(attribName) {
+        return this._elem.getAttribute(attribName);
+    }
+
+    // Set an attribute on the document element by its name. val contains the value to set on the attribute
+    public setAttribute(attribName, val) {
+        this._elem.setAttribute(attribName, val);
+    }
+
+    // Get the current event handler for a specific event (passed as a string in eventName)
+    public getEventHandler(eventName) {
+        return this._elem[eventName];
+    }
+
+    // Get the current event handler for a specific event (passed as a string in eventName)
+    public setEventHandler(eventName, handler) {
+        this._elem[eventName] = handler;
+    }
+
+    // Every htmlElement must define the element type which it creates.
+    protected abstract createElement();
+}
+
+// An unanadorned div, the simplest particle in our atomic model
+export class Div extends HtmlElement {
+
+    constructor(owner) {
+        super(owner);
+    }
+
+    public createElement() {
+        return document.createElement("div");
+    }
+}
+
+// Any view which manages a simple value data type (string, number, bool, date/time) exposes get/set methods, which
+// manage access to the value associated with the element. For most document elements, this is simply the text value
+// of the innerHTML property. (See the ivc.input type below, which overrides get/set, which in its case, is an attribute
+// on the input document element
+
+export abstract class ValueElement extends HtmlElement {
+
+    constructor(owner) {
+        super(owner);
+    }
+
+    public set value(val) {
+        const _elem = this._elem;
+        // Don't waste our time we've already set this value. We don't want to re-display what is already displayed.
+        if (_elem.innerHTML !== val) {
+            _elem.innerHTML = val;
+        }
+    }
+
+    public get value() {
+        return this._elem.innerHTML;
+    }
+
+}
+
+export class Label extends ValueElement {
+
+    constructor(owner) {
+        super(owner);
+    }
+
+    protected createElement() {
+        return document.createElement("label");
+    }
+}
+
+// A div class which functions as a text label, not as an outside wrapper for other document elements. It can be
+// substitued for the label class above.
+
+export class DivLabel extends ValueElement {
+
+    constructor(owner) {
+        super(owner);
+    }
+
+    protected createElement() {
+        return document.createElement("div");
+    }
+}
+
+export class Icon extends ValueElement {
+
+    constructor(owner) {
+        super(owner);
+    }
+
+    protected createElement() {
+        return document.createElement("i");
+    }
+}
+
+export class Button extends ValueElement {
+
+    constructor(owner) {
+        super(owner);
+    }
+
+    public get value() {
+        return this._elem.value;
+    }
+
+    public set value(val) {
+        const _current = this.value;
+        if (_current !== val) {
+            this._elem.value = val;
+        }
+    }
+
+    public createElement() {
+        const _elem = document.createElement("input");
+        _elem.type = "button";
+        _elem.onclick = () => {
+            this.fire({ type: "clicked", target: this });
+        };
+        return _elem;
+    }
+}
+
+export class Select extends ValueElement {
+
+    constructor(owner) {
+        super(owner);
+    }
+
+    private _entryVal = this.value;
+
+    protected createElement() {
+        const _elem = document.createElement("select");
+
+        // Captures the onchange event from the input element and fires it in the context of this instance.
+        _elem.onchange = () => {
+            // Set the value of the select object from its encapsulated select element
+            // _that.set();
+            // Now fire the changed event. To the listener, it will look just like an input element
+            this.fire({ type: "changed", target: this, previous: this._entryVal, current: this.value });
+            // Save the new value to pass as previous in case they change again before leaving the field
+            this._entryVal = this.value;
+        };
+
+        _elem.onfocus = () => {
+            this._entryVal = this.value;
+        };
+
+        return _elem;
+    }
+
+    public addOption(txt, val) {
+        // Create the option element
+        const _option = document.createElement("option");
+        // Set the displayed option value
+        _option.text = txt;
+        // We can't store the value in the option.value attribute, since it's always written as a string.
+        // tslint:disable-next-line:no-string-literal
+        _option["val"] = val;
+        this._elem.options.add(_option);
+    }
+
+    // Builds an option list from the this.options function.
+    protected initializeOptions(opts) {
+        foreachProp(this, opts, function (opt, name) { this.addOption(opt, name); });
+    }
+
+    public selectedIndex() {
+        return this._elem.selectedIndex;
+    }
+
+    public clearOptions() {
+        const _selectBox = this._elem;
+        for (let _i = _selectBox.length - 1; _i >= 0; _i--) {
+            _selectBox.remove(_i);
+        }
+    }
+
+    public options() {
+        return this._elem.options;
+    }
+
+    public get value(): ValueElement {
+        return this.options()[this.selectedIndex()].val;
+    }
+
+    public set value(val) {
+        let _i;
+        const _options = this.options();
+        for (_i = 0; _i < _options.length; _i++) {
+            if (val === _options[_i].val) {
+                this._elem.selectedIndex = _i;
+                return;
+            }
+        }
+    }
+}
+
+// An input class for the HTML input control
+export abstract class Input extends ValueElement {
+
+    constructor(owner) {
+        super(owner);
+    }
+
+    private _entryVal;
+    private _exitVal;
+
+    protected abstract inputType();
+
+    public createElement() {
+        const _elem = document.createElement("input");
+        _elem.setAttribute("type", this.inputType());
+
+        // Captures the onblur event from the input element and fires it in the context of this instance.
+        _elem.onblur = (ev) => {
+            this.fire({ type: "blurred", event: ev });
+            this._exitVal = this.value;
+            if (this._exitVal !== this._entryVal) {
+                this.fire({ type: "changed", target: this, previous: this._entryVal, current: this._exitVal });
+            }
+        };
+
+        _elem.onfocus = (ev) => {
+            this.fire({ type: "focused", event: ev });
+            this._entryVal = this.value;
+        };
+        return _elem;
+    }
+}
+
+export class StringInput extends Input {
+
+    constructor(owner) {
+        super(owner);
+    }
+
+    public inputType() {
+        return "string";
+    }
+
+    get value() {
+        return this._elem.value;
+    }
+
+    set value(val) {
+        const _current = this.value;
+        if (_current !== val) {
+            this._elem.value = val;
+        }
+    }
+}
+
+export class NumberInput extends Input {
+
+    constructor(owner) {
+        super(owner);
+    }
+
+    public inputType() {
+        return "number";
+    }
+
+    get value() {
+        return Number(this._elem.value);
+    }
+
+    set value(val) {
+        const _current = this.value;
+        if (_current !== Number(val)) {
+            this._elem.value = val;
+        }
+    }
+}
+
+export class CheckboxInput extends Input {
+
+    constructor(owner) {
+        super(owner);
+    }
+
+    public inputType() {
+        return "checkbox";
+    }
+
+    get value() {
+        return Boolean(this._elem.value);
+    }
+
+    set value(val) {
+        const _current = this.value;
+        if (_current !== Boolean(val)) {
+            this._elem.value = val;
+        }
+    }
+}
+
+export class DateInput extends Input {
+
+    constructor(owner) {
+        super(owner);
+    }
+
+    public inputType() {
+        return "date";
+    }
+
+    public get value() {
+        let _val = this._elem.value;
+        if (_val) {
+            _val = _val.toDateFromInputString();
+        } else {
+            _val = null;
+        }
+        return _val;
+    }
+
+    public set value(val) {
+
+        // First change any non-date argument into a date.
+        if (!(typeof val === "object")) {
+            val = new Date(val);
+        }
+        const _current = this.value;
+        if (val && (!_current || (_current.getTime() !== val.getTime()))) {
+            this._elem.value = val.toInputString();
+        }
+    }
+}
+
+// A view manages the display of a single model. It is always contained within a div, which wraps the various
+// document elements. It is important to note that htmlElements, such as ivv.label and ivv.input, are NOT
+// ivv.views, but instead are managed by view. Simply put, all views are htmlElements, but not all htmlElements
+// are views.
+
+export class View extends HtmlElement {
+
+    constructor(owner) {
+        super(owner);
+        this.on("created", () => {
+            this.model.on("changed", (event) => {
+                this.onModelChanged(event);
+            });
+        });
+    }
+    protected createElement() {
+        return document.createElement("div");
+    }
+
+    // The dataProperty which holds the model instance which this view instance is managing
+    public model = new $Any(this);
+
+    // When a model changes on a complex property, it must be reconstructed. The code below first checks to make sure
+    // any existing model is deletd from the views() collection and then adds itself into the collection and invokes
+    // the construct method.
+
+    public onModelChanged (event) {
+        if (event.previous) {
+            event.previous.views().remove(this);
+            // Ensure that all the document elements we created are destroyed;
+            this.destroy();
+        }
+        if (event.current) {
+            event.current.views().add(this);
+            // A view's model is currently the only trigger for construction. If this changes, we'll need to
+            // surround the construct call with the two fire events as shown below.
+            this.fire({ type: "constructing", target: this, model: event.current });
+            this.construct();
+            this.fire({ type: "constructed", target: this, model: event.current });
+        }
+    }
+
+    // this.construct() managages any necessary changes to the view's actual structure that are necessary as a result of
+    // the assignment of a new model property.
+    public construct() {
+    }
+
+    public destroy() {
+        const _elem = this._elem;
+        while (_elem.firstChild) {
+            _elem.removeChild(_elem.firstChild);
+        }
+    }
+
+    public getContext() {
+        return "view";
+    }
+
+    // this.refresh() updates the data displayed by the view and its associated htmlElements. It responds to changes
+    // in the data held by the existing model.
+    public refresh () {
+    }
+}
+
+export class DataPropertyView extends View {
+
+    constructor(owner) {
+        super(owner);
+    }
+
+    private typeTable = {
+        boolean: function(owner){return new CheckboxInput(owner).init(); },
+        date: function(owner){return new DateInput(owner).init(); },
+        number: function(owner){return new NumberInput(owner).init(); },
+        string: function(owner){return new StringInput(owner).init(); },
+    };
+
+    public construct () {
+        // Create a label for this view
+        this.label = this.createLabel();
+
+        // And an input control
+        this.input = this.createInput();
+    }
+
+    // Override in subclasses to created the desired label field
+    protected createLabel = function () {
+        const _inst = new DivLabel(this).init();
+        _inst.className = "label";
+        this.appendChild(_inst);
+        return _inst;
+    };
+
+    // Override in subclasses to create the desired input field.
+    protected createInput = function () {
+        let _inst;
+        const _model = this.model.value;
+        const _readOnly = _model.readOnly;
+        if (_readOnly) {
+            _inst = new DivLabel(this).init();
+        } else if (_model.options) {
+            _inst = new Select(this).init();
+            _inst.initializeOptions(_model.options());
+        } else {
+            _inst = this.typeTable[this.dataType](this);
+        }
+        _inst.className = "input";
+        // This updates the model when the input control changes
+        _inst.on("changed", (event) => {
+            this.model.value = event.current;
+        });
+
+        this.appendChild(_inst);
+
+        return _inst;
+    };
+
+    get dataType() {
+        return this.model.value.dataType;
+    }
+
+    // The label for the dataProperty (by default displays the dataProperty's caption())
+    public label ;
+
+    // The input field for the dataProperty
+    public input ;
+
+    // this.refresh() makes the view "come to life" by updating each of its htmlElement components with the appropriate
+    // data from its model property;
+    public refresh() {
+        const _model = this.model.value;
+        // Sets the label htmlElement to the model's caption property.
+        this.label.value = _model.caption;
+        // Sets the input htmlElement to the current value of the model (a dataProperty).
+        this.input.value = _model.value;
+    }
+}
