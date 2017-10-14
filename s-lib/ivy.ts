@@ -1,4 +1,5 @@
 import {decamelCase, enableEvents} from "./utils";
+import { View } from "./Views";
 
 export type forEachFunc = (mem, i) => void;
 
@@ -36,6 +37,7 @@ const keyFactory = new LUIDFactory();
 export abstract class $Property {
 
     private _owner: $Complex;
+    private _views: ViewCollection;
     private _caption: string;
     private _clsName: string;
     private _key: string;
@@ -102,6 +104,41 @@ export abstract class $Property {
     public toJSON() {
         const writer = new $JSONWriter();
         return writer.write(this);
+    }
+
+    public get views (): ViewCollection {
+        if (!this._views) {
+            this._views = this.createViewCollection();
+        }
+        return this._views;
+    }
+
+    // Override createViewCollection to add a more sophisticated collection object.
+    protected createViewCollection (): ViewCollection {
+        const _coll = new ViewCollection(this);
+
+        // When we add the view, we need to set the view's model property
+        _coll.on("itemAdded", (event) => {
+            event.target.model = this;
+        });
+
+        // Set the removed model to null to be a good garbage collection citizen.
+        _coll.on("itemRemoved", (event) => {
+            event.target.model = null;
+        });
+        return _coll;
+    }
+
+    // Iterates through all of the current views and refreshes them.
+    protected refreshViews () {
+        // Get out fast if there are no views
+        if (this._views) {
+            if (this._views.count) {
+                this._views.forEach(function (v) {
+                    v.refresh();
+                });
+            }
+        }
     }
 }
 
@@ -208,7 +245,10 @@ export class $TypedCollection<T> extends $Collection {
     }
 }
 
-export class $Properties extends $StaticCollection {
+export class ViewCollection extends $TypedCollection<View> {
+}
+
+export class $PropertyCollection extends $StaticCollection {
 
     private _names = {};
 
@@ -242,7 +282,7 @@ export class $Properties extends $StaticCollection {
 
 export abstract class $Object extends $Complex {
 
-    private _props = new $Properties();
+    private _props = new $PropertyCollection();
 
     protected constructor(owner?) {
         super(owner);
@@ -290,10 +330,23 @@ export interface IValue<T> {
     convert(v: any): T;
 }
 
+export interface IOption<T> {
+    value: T;
+    display: string;
+}
+
+export interface IValue<T> {
+    value(): T;
+    value(T);
+    convert(v: any): T;
+    options: Array<IOption<T>>;
+}
+
 export abstract class $Value extends $Property {
 
     private _val: any;
     private _calc: boolean = false;
+    private _options = null;
 
     protected constructor(owner?) {
         super(owner);
@@ -322,7 +375,16 @@ export abstract class $Value extends $Property {
         if ((this._val !== pval) && this.validate(pval)) {
             this._val = pval;
             this.fire({ type: "changed", target: this, value: this._val });
+            this.refreshViews();
         }
+    }
+
+    public get options(): any {
+        return this._options;
+    }
+
+    public set options(val: any) {
+        this._options = val;
     }
 }
 
@@ -332,7 +394,7 @@ export class $String extends $Value implements IValue<string> {
         super(owner);
     }
 
-    public convert(v: any): any {
+    public convert(v: any): string {
         return v.toString();
     }
 
@@ -348,7 +410,7 @@ export class $Number extends $Value implements IValue<number> {
         super(owner);
     }
 
-    public convert(v: any): any {
+    public convert(v: any): number {
         return Number(v);
     }
 
@@ -363,7 +425,7 @@ export class $Date extends $Value implements IValue<Date> {
         super(owner);
     }
 
-    public convert(v: any): any {
+    public convert(v: any): Date {
         if (v && typeof v !== "object") {
             v = new Date(v);
         }
@@ -382,7 +444,7 @@ export class $Boolean extends $Value implements IValue<boolean> {
         super(owner);
     }
 
-    public convert(v: any): any {
+    public convert(v: any): boolean {
         return Boolean(v);
     }
 

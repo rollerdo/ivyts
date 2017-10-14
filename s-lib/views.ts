@@ -1,4 +1,4 @@
-import { $Any, $Boolean, $Complex, $Object, $Property, $String } from "./ivy";
+import { $Any, $Boolean, $Complex, $Object, $Property, $String, $Value } from "./ivy";
 import { foreachProp } from "./utils";
 
 export abstract class HtmlElement extends $Object {
@@ -167,12 +167,18 @@ export class Select extends ValueElement {
 
     constructor(owner) {
         super(owner);
+        this.on("created", () => {
+//            this.initializeOptions({ usa: "USA", cr: "Costa Rica" });
+//            this.initializeOptions(["USA", "Costa Rica" ]);
+            this.initializeOptions([{value: "usa", display: "USA"}, {value: "cr", display: "Costa Rica" }]);
+            this._entryVal = this.value;
+        });
     }
 
-    private _entryVal = this.value;
+    private _entryVal;
 
     protected createElement() {
-        const _elem = document.createElement("select");
+        const _elem = document.createElement("select") as HTMLSelectElement;
 
         // Captures the onchange event from the input element and fires it in the context of this instance.
         _elem.onchange = () => {
@@ -193,7 +199,7 @@ export class Select extends ValueElement {
 
     public addOption(txt, val) {
         // Create the option element
-        const _option = document.createElement("option");
+        const _option = document.createElement("option") as HTMLOptionElement;
         // Set the displayed option value
         _option.text = txt;
         // We can't store the value in the option.value attribute, since it's always written as a string.
@@ -204,7 +210,18 @@ export class Select extends ValueElement {
 
     // Builds an option list from the this.options function.
     protected initializeOptions(opts) {
-        foreachProp(this, opts, function (opt, name) { this.addOption(opt, name); });
+        this.clearOptions();
+        if (!Array.isArray(opts)) {
+            foreachProp(this, opts, function (opt, name) { this.addOption(opt, name); });
+        } else {
+            opts.forEach((opt) => {
+                if (typeof opt === "string") {
+                    this.addOption(opt, opt);
+                } else {
+                    this.addOption(opt.display, opt.value);
+                }
+            });
+        }
     }
 
     public selectedIndex() {
@@ -226,7 +243,7 @@ export class Select extends ValueElement {
         return this.options()[this.selectedIndex()].val;
     }
 
-    public set value(val) {
+    public set value(val: ValueElement) {
         let _i;
         const _options = this.options();
         for (_i = 0; _i < _options.length; _i++) {
@@ -251,7 +268,7 @@ export abstract class Input extends ValueElement {
     protected abstract inputType();
 
     public createElement() {
-        const _elem = document.createElement("input");
+        const _elem = document.createElement("input") as HTMLInputElement;
         _elem.setAttribute("type", this.inputType());
 
         // Captures the onblur event from the input element and fires it in the context of this instance.
@@ -377,44 +394,36 @@ export class DateInput extends Input {
 
 export class View extends HtmlElement {
 
+    private _model: $Property = null;
+
     constructor(owner) {
         super(owner);
-        this.on("created", () => {
-            this.model.on("changed", (event) => {
-                this.onModelChanged(event);
-            });
-        });
     }
     protected createElement() {
         return document.createElement("div");
     }
 
-    // The dataProperty which holds the model instance which this view instance is managing
-    public model = new $Any(this);
+    public get model() {
+        return this._model;
+    }
 
-    // When a model changes on a complex property, it must be reconstructed. The code below first checks to make sure
-    // any existing model is deletd from the views() collection and then adds itself into the collection and invokes
-    // the construct method.
-
-    public onModelChanged (event) {
-        if (event.previous) {
-            event.previous.views().remove(this);
-            // Ensure that all the document elements we created are destroyed;
+    public set model(mod: $Property) {
+        if (mod !== this._model) {
+            if (this._model) {
+                this._model.views.remove(this);
+            }
             this.destroy();
-        }
-        if (event.current) {
-            event.current.views().add(this);
-            // A view's model is currently the only trigger for construction. If this changes, we'll need to
-            // surround the construct call with the two fire events as shown below.
-            this.fire({ type: "constructing", target: this, model: event.current });
+            this._model = mod;
+            this._model.views.add(this);
+            this.fire({ type: "constructing", target: this, model: mod });
             this.construct();
-            this.fire({ type: "constructed", target: this, model: event.current });
+            this.fire({ type: "constructed", target: this, model: mod });
         }
     }
 
-    // this.construct() managages any necessary changes to the view's actual structure that are necessary as a result of
+    // this.construct() manages any necessary changes to the view's actual structure that are necessary as a result of
     // the assignment of a new model property.
-    public construct() {
+    protected construct() {
     }
 
     public destroy() {
@@ -447,7 +456,7 @@ export class DataPropertyView extends View {
         string: function(owner){return new StringInput(owner).init(); },
     };
 
-    public construct () {
+    protected construct () {
         // Create a label for this view
         this.label = this.createLabel();
 
@@ -466,13 +475,12 @@ export class DataPropertyView extends View {
     // Override in subclasses to create the desired input field.
     protected createInput = function () {
         let _inst;
-        const _model = this.model.value;
-        const _readOnly = _model.readOnly;
-        if (_readOnly) {
+        const _model = this.model;
+        if (_model.readOnly) {
             _inst = new DivLabel(this).init();
         } else if (_model.options) {
             _inst = new Select(this).init();
-            _inst.initializeOptions(_model.options());
+            _inst.initializeOptions(_model.options);
         } else {
             _inst = this.typeTable[this.dataType](this);
         }
@@ -488,7 +496,7 @@ export class DataPropertyView extends View {
     };
 
     get dataType() {
-        return this.model.value.dataType;
+        return (this.model as $Value).dataType;
     }
 
     // The label for the dataProperty (by default displays the dataProperty's caption())
@@ -500,10 +508,10 @@ export class DataPropertyView extends View {
     // this.refresh() makes the view "come to life" by updating each of its htmlElement components with the appropriate
     // data from its model property;
     public refresh() {
-        const _model = this.model.value;
+        const _model = this.model;
         // Sets the label htmlElement to the model's caption property.
         this.label.value = _model.caption;
         // Sets the input htmlElement to the current value of the model (a dataProperty).
-        this.input.value = _model.value;
+        this.input.value = _model.displayValue;
     }
 }
