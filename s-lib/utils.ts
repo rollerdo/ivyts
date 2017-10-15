@@ -60,3 +60,22 @@ export const enableEvents = function (that) {
 
     return that;
 };
+
+export function padLeft (str, paddingValue) {
+    return String(paddingValue + str).slice(-paddingValue.length);
+}
+
+// Converts a date to a string that can be used by the Javascript date control
+export function toInputStringfromDate (val: Date) {
+    const retVal: string = padLeft (val.getFullYear().toString(), "0000") + "-" +
+        padLeft ((val.getMonth() + 1).toString(), "00") + "-" +
+        padLeft(val.getDate().toString(), "00");
+    return retVal;
+}
+
+export function toDateFromInputString(val: string) {
+    const y = Number(val.substr(0, 4));
+    const m = Number(val.substr(5, 2)) - 1;
+    const d = Number(val.substr(8, 2));
+    return new Date(y, m, d);
+}
