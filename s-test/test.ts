@@ -24,7 +24,7 @@ email.preferred.value = false;
 contactInfo.add(email);
 
 const phone = new Phone().init();
-phone.phoneNumber.value = "417-777-0601";
+phone.number.value = "417-777-0601";
 phone.preferred.value = true;
 phone.phoneType.value = "mobile";
 contactInfo.add(phone);

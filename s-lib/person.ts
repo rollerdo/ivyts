@@ -26,9 +26,11 @@ export class PersonalInfo extends $Component {
         this.age.on("evaluate", () => {
             this.age.value = age(new Date(Date.now()), this.birthday.value);
         });
+        this.gender.options = {m: "male", f: "female"};
     }
     public birthday = new $Date(this);
     public age = new $Number(this);
+    public gender = new $String(this);
 
     get displayValue(): any {
         return "Age: " + this.age.value;
@@ -60,11 +62,11 @@ export class Phone extends Contact {
         super(owner);
     }
 
-    public phoneNumber = new $String(this);
+    public number = new $String(this);
     public phoneType = new $String(this);
 
     get displayValue(): any {
-        return this.phoneNumber.value + (this.preferred.value ? " (preferred)" : "");
+        return this.number.value + (this.preferred.value ? " (preferred)" : "");
     }
 }
 

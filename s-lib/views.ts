@@ -1,5 +1,5 @@
 import { $Any, $Boolean, $Complex, $Object, $Property, $String, $Value } from "./ivy";
-import { foreachProp } from "./utils";
+import { foreachProp, toDateFromInputString, toInputStringfromDate } from "./utils";
 
 export abstract class HtmlElement extends $Object {
 
@@ -367,7 +367,7 @@ export class DateInput extends Input {
     public get value() {
         let _val = this._elem.value;
         if (_val) {
-            _val = _val.toDateFromInputString();
+            _val = toDateFromInputString(_val);
         } else {
             _val = null;
         }
@@ -382,7 +382,7 @@ export class DateInput extends Input {
         }
         const _current = this.value;
         if (val && (!_current || (_current.getTime() !== val.getTime()))) {
-            this._elem.value = val.toInputString();
+            this._elem.value = toInputStringfromDate(val);
         }
     }
 }
@@ -392,7 +392,7 @@ export class DateInput extends Input {
 // ivv.views, but instead are managed by view. Simply put, all views are htmlElements, but not all htmlElements
 // are views.
 
-export class View extends HtmlElement {
+export abstract class View extends HtmlElement {
 
     private _model: $Property = null;
 
@@ -423,8 +423,7 @@ export class View extends HtmlElement {
 
     // this.construct() manages any necessary changes to the view's actual structure that are necessary as a result of
     // the assignment of a new model property.
-    protected construct() {
-    }
+    protected abstract construct();
 
     public destroy() {
         const _elem = this._elem;

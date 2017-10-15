@@ -5,7 +5,7 @@ const app = express();
 app.use(express.static(__dirname));
 
 import { $Collection, $JSONReader, $JSONWriter,  $Object, $Property, $TextWriter, $Writer} from "../s-lib/ivy";
-import { Contact, Contacts, Email, Fax, Person, PersonalInfo as Info} from "../s-lib/person";
+import { Contact, Contacts, Email, Person, PersonalInfo as Info} from "../s-lib/person";
 import { PersonalName as Name, Phone } from "../s-lib/person";
 
 const person = new Person(null).init();
@@ -29,16 +29,10 @@ email.preferred.value = false;
 contactInfo.add(email);
 
 const phone = new Phone().init();
-phone.phoneNumber.value = "417-777-0601";
+phone.number.value = "417-777-0601";
 phone.preferred.value = true;
 phone.phoneType.value = "mobile";
 contactInfo.add(phone);
-
-const fax = new Fax().init();
-fax.phoneNumber.value = "417-777-2221";
-fax.preferred.value = true;
-fax.phoneType.value = "fax";
-contactInfo.add(fax);
 
 app.get("/hello", function (request, response) {
     response.send("Hello, World");
