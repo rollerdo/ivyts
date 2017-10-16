@@ -101,6 +101,12 @@ export abstract class $Property {
         return this._owner;
     }
 
+    public fromJSON(json: string) {
+        const reader = new $JSONReader();
+        const obj = JSON.parse(json);
+        reader.read(this, obj);
+    }
+
     public toJSON() {
         const writer = new $JSONWriter();
         return writer.write(this);
@@ -322,12 +328,6 @@ export abstract class $App extends $Persistent {
     protected constructor(owner?) {
         super(owner);
     }
-}
-
-export interface IValue<T> {
-    value(): T;
-    value(T);
-    convert(v: any): T;
 }
 
 export interface IOption<T> {

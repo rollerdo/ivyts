@@ -29,7 +29,7 @@ export abstract class HtmlElement extends $Object {
 
     // Insert passes the document element into which we want to insert our view. This is NOT an ivy object
     // but a normal HTML document element, so we pass it the pointer to our document element.
-    public insert(parentElem) {
+    public insert(parentElem, refresh?) {
         parentElem.appendChild(this._elem);
     }
 
@@ -73,6 +73,7 @@ export class Div extends HtmlElement {
     public createElement() {
         return document.createElement("div");
     }
+
 }
 
 // Any view which manages a simple value data type (string, number, bool, date/time) exposes get/set methods, which
@@ -168,9 +169,9 @@ export class Select extends ValueElement {
     constructor(owner) {
         super(owner);
         this.on("created", () => {
-//            this.initializeOptions({ usa: "USA", cr: "Costa Rica" });
-//            this.initializeOptions(["USA", "Costa Rica" ]);
-            this.initializeOptions([{value: "usa", display: "USA"}, {value: "cr", display: "Costa Rica" }]);
+            //            this.initializeOptions({ usa: "USA", cr: "Costa Rica" });
+            //            this.initializeOptions(["USA", "Costa Rica" ]);
+            this.initializeOptions([{ value: "usa", display: "USA" }, { value: "cr", display: "Costa Rica" }]);
             this._entryVal = this.value;
         });
     }
@@ -421,6 +422,15 @@ export abstract class View extends HtmlElement {
         }
     }
 
+    public insert(parentElem, refresh?) {
+        parentElem.appendChild(this._elem);
+        if (this.is(View)) {
+            if ((typeof refresh === "undefined") || refresh) {
+                this.refresh();
+            }
+        }
+    }
+
     // this.construct() manages any necessary changes to the view's actual structure that are necessary as a result of
     // the assignment of a new model property.
     protected abstract construct();
@@ -438,7 +448,7 @@ export abstract class View extends HtmlElement {
 
     // this.refresh() updates the data displayed by the view and its associated htmlElements. It responds to changes
     // in the data held by the existing model.
-    public refresh () {
+    public refresh() {
     }
 }
 
@@ -449,13 +459,13 @@ export class DataPropertyView extends View {
     }
 
     private typeTable = {
-        boolean: function(owner){return new CheckboxInput(owner).init(); },
-        date: function(owner){return new DateInput(owner).init(); },
-        number: function(owner){return new NumberInput(owner).init(); },
-        string: function(owner){return new StringInput(owner).init(); },
+        boolean: function (owner) { return new CheckboxInput(owner).init(); },
+        date: function (owner) { return new DateInput(owner).init(); },
+        number: function (owner) { return new NumberInput(owner).init(); },
+        string: function (owner) { return new StringInput(owner).init(); },
     };
 
-    protected construct () {
+    protected construct() {
         // Create a label for this view
         this.label = this.createLabel();
 
@@ -499,10 +509,10 @@ export class DataPropertyView extends View {
     }
 
     // The label for the dataProperty (by default displays the dataProperty's caption())
-    public label ;
+    public label;
 
     // The input field for the dataProperty
-    public input ;
+    public input;
 
     // this.refresh() makes the view "come to life" by updating each of its htmlElement components with the appropriate
     // data from its model property;
