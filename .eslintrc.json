@@ -13,7 +13,7 @@
     },
     "rules": {
         "block-scoped-var": "off",
-        "camelcase": "warn",
+        "camelcase": "off",
         "semi": "warn",
         "comma-dangle": "warn",
         "arrow-spacing": "warn",

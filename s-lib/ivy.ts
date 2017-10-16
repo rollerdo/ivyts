@@ -80,11 +80,6 @@ export abstract class $Property {
         this._clsName = v;
     }
 
-    public init() {
-        this.fire("created");
-        return this;
-    }
-
     public get displayValue(): string {
         return this.className;
     }
@@ -266,7 +261,7 @@ export class $PropertyCollection extends $StaticCollection {
         return this._names[n] as $Property;
     }
 
-    public initialize(obj: $Object): void {
+    public initProperties(obj: $Object): void {
         let _v: $Property, _n: string;
         for (_n in obj) {
             _v = obj[_n];
@@ -295,7 +290,7 @@ export abstract class $Object extends $Complex {
 
         // Must be done after properties from all descendent classes have been added.
         this.on("created", function (event) {
-            this.properties.initialize(this);
+            this.properties.initProperties(this);
         });
     }
 
@@ -324,14 +319,11 @@ export abstract class $Persistent extends $Object {
     public ID = new $String(this);
 }
 
-function create<T>(c: {new(): T; }): T {
-    return new c();
-}
-
 export abstract class $App extends $Persistent {
-    public static create<T extends $Property>(c: {new(owner: $Property): T}, owner): T  {
+    public static create<T extends $Property>(c: {new(owner?: $Property): T}, owner?: $Property): T  {
         const obj: T = new c (owner);
-        return obj.init();
+        obj.fire("created");
+        return obj;
     }
     protected constructor(owner?) {
         super(owner);

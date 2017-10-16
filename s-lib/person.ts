@@ -1,4 +1,4 @@
-import { $Boolean, $Collection, $Component, $Date, $Number, $Persistent, $String } from "./ivy";
+import { $App, $Boolean, $Collection, $Component, $Date, $Number, $Persistent, $String } from "./ivy";
 import { $TypedCollection } from "./ivy";
 import { age } from "./utils";
 
@@ -26,7 +26,7 @@ export class PersonalInfo extends $Component {
         this.age.on("evaluate", () => {
             this.age.value = age(new Date(Date.now()), this.birthday.value);
         });
-        this.gender.options = {m: "male", f: "female"};
+        this.gender.options = {f: "female", m: "male"};
     }
     public birthday = new $Date(this);
     public age = new $Number(this);
@@ -86,15 +86,15 @@ export class Fax extends Contact {
 const contactInfoClasses = {
     Email: {
         className: "Email",
-        factory: function(owner) {return new Email(owner).init(); }
+        factory: function(owner) {return $App.create<Email>(Email, owner); }
     },
     Fax: {
         className: "Fax",
-        factory: function(owner) {return new Fax(owner).init(); }
+        factory: function(owner) {return $App.create<Fax>(Fax, owner); }
     },
     Phone: {
         className: "Phone",
-        factory: function(owner) {return new Phone(owner).init(); }
+        factory: function(owner) {return $App.create<Phone>(Phone, owner); }
     }
 };
 
@@ -110,9 +110,9 @@ export class Person extends $Persistent {
         });
     }
 
-    public name = new PersonalName(this).init();
-    public personalInfo = new PersonalInfo(this).init();
-    public contacts = new Contacts().init();
+    public name = $App.create<PersonalName>(PersonalName, this);
+    public personalInfo = $App.create<PersonalInfo>(PersonalInfo, this);
+    public contacts = $App.create<Contacts>(Contacts, this);
 
     get displayValue(): any {
         return this.name.displayValue + ", " + this.personalInfo.displayValue;

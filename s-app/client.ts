@@ -25,7 +25,7 @@ function createPerson(): Person {
     person.name.middle.value = "Douglas";
     person.name.last.value = "Roller";
     person.personalInfo.birthday.value = new Date(1954, 0, 30);
-    person.personalInfo.gender.value = "f";
+    person.personalInfo.gender.value = "m";
     const phone: Phone = $App.create<Phone>(Phone, person);
     phone.number.value = "417-777-0601";
     phone.preferred.value = true;

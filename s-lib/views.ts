@@ -466,9 +466,9 @@ export class DataPropertyView extends View {
 
     private typeTable = {
         boolean: function (owner) { return $App.create<CheckboxInput>(CheckboxInput, owner); },
-        date: function (owner) { return new DateInput(owner).init(); },
-        number: function (owner) { return new NumberInput(owner).init(); },
-        string: function (owner) { return new StringInput(owner).init(); },
+        date: function (owner) { return $App.create<DateInput>(DateInput, owner); },
+        number: function (owner) { return $App.create<NumberInput>(NumberInput, owner); },
+        string: function (owner) { return $App.create<StringInput>(StringInput, owner); },
     };
 
     protected construct() {
@@ -481,7 +481,7 @@ export class DataPropertyView extends View {
 
     // Override in subclasses to created the desired label field
     protected createLabel = function () {
-        const _inst = new DivLabel(this).init();
+        const _inst = $App.create<DivLabel>(DivLabel, this);
         _inst.className = "label";
         this.appendChild(_inst);
         return _inst;
@@ -492,9 +492,9 @@ export class DataPropertyView extends View {
         let _inst;
         const _model = this.model;
         if (_model.readOnly) {
-            _inst = new DivLabel(this).init();
+            _inst = $App.create<DivLabel>(DivLabel, this);
         } else if (_model.options) {
-            _inst = new Select(this).init();
+            _inst = $App.create<Select>(Select, this);
             _inst.initializeOptions(_model.options);
         } else {
             _inst = this.typeTable[this.dataType](this);

@@ -25,7 +25,7 @@
         {
             "taskName": "Webpack",
             "type": "shell",
-            "command": "webpack --watch"
+            "command": "webpack"
         },
         {
             "taskName": "Webpack (Watch)",
