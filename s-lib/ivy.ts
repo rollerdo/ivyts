@@ -324,7 +324,15 @@ export abstract class $Persistent extends $Object {
     public ID = new $String(this);
 }
 
+function create<T>(c: {new(): T; }): T {
+    return new c();
+}
+
 export abstract class $App extends $Persistent {
+    public static create<T extends $Property>(c: {new(owner: $Property): T}, owner): T  {
+        const obj: T = new c (owner);
+        return obj.init();
+    }
     protected constructor(owner?) {
         super(owner);
     }

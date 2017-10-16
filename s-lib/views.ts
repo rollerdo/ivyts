@@ -1,16 +1,16 @@
-import { $Any, $Boolean, $Complex, $Object, $Property, $String, $Value } from "./ivy";
+import { $Any, $App, $Boolean, $Complex, $Object, $Property, $String, $Value } from "./ivy";
 import { foreachProp, toDateFromInputString, toInputStringfromDate } from "./utils";
 
 export abstract class HtmlElement extends $Object {
 
     private _oldDisplay: string;
     protected _elem;
+    protected _hidden: boolean = false;
 
     constructor(owner) {
         super(owner);
         this.on("created", () => {
             this._elem = this.createElement();
-            this.hidden.value = false;
         });
 
     }
@@ -33,11 +33,17 @@ export abstract class HtmlElement extends $Object {
         parentElem.appendChild(this._elem);
     }
 
-    public hideable() {
+    public get hideable() {
         return (this._elem.childNodes.length > 0);
     }
 
-    public hidden = new $Boolean(this);
+    public get hidden(): boolean {
+        return this._hidden;
+    }
+
+    public set hidden(val: boolean) {
+        this._hidden = val;
+    }
 
     // Retrieve an attribute from the document element by its name
     public getAttribute(attribName) {
@@ -459,7 +465,7 @@ export class DataPropertyView extends View {
     }
 
     private typeTable = {
-        boolean: function (owner) { return new CheckboxInput(owner).init(); },
+        boolean: function (owner) { return $App.create<CheckboxInput>(CheckboxInput, owner); },
         date: function (owner) { return new DateInput(owner).init(); },
         number: function (owner) { return new NumberInput(owner).init(); },
         string: function (owner) { return new StringInput(owner).init(); },
