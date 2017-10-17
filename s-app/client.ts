@@ -1,22 +1,14 @@
 import { $App, $String, $TextWriter, $Value } from "../s-lib/ivy";
 import { Email, Person, Phone } from "../s-lib/person";
-import { DataPropertyView as PropView, Select, StringInput } from "../s-lib/views";
+import { ObjectView, Select, StringInput } from "../s-lib/views";
 
 function main() {
-    let person = createPerson();
-    const json: string = person.toJSON();
-    person = $App.create<Person>(Person, null);
-    person.fromJSON(json);
+    const person = createPerson();
+    const objView = $App.create<ObjectView>(ObjectView, null);
+    objView.model = person;
     const frame = document.getElementById("frame");
-    const nameView = $App.create<PropView>(PropView, null);
-    nameView.model = person.personalInfo.birthday;
-    nameView.insert (frame);
-    const dateView = $App.create<PropView>(PropView, null);
-    dateView.model = person.personalInfo.age;
-    dateView.insert (frame);
-    const genderView = $App.create<PropView>(PropView, null);
-    genderView.model = person.personalInfo.gender;
-    genderView.insert (frame);
+    objView.insert(frame);
+    objView.refresh();
 }
 
 function createPerson(): Person {

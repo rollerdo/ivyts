@@ -1,10 +1,10 @@
-import { $Any, $App, $Boolean, $Complex, $Object, $Property, $String, $Value } from "./ivy";
+import { $Any, $App, $Boolean, $Collection, $Complex, $Object, $Property, $String, $Value } from "./ivy";
 import { foreachProp, toDateFromInputString, toInputStringfromDate } from "./utils";
 
 export abstract class HtmlElement extends $Object {
 
     private _oldDisplay: string;
-    protected _elem;
+    private _elem;
     protected _hidden: boolean = false;
 
     constructor(owner) {
@@ -20,11 +20,18 @@ export abstract class HtmlElement extends $Object {
         // Since pro.elem is a protected variable, we don't have direct access to it via inst. We can,
         // however, fire an accessRequest event, passing the name of the member of the protected variable
         // (in this case "elem") which is returned in event.value.
-        this._elem.appendChild(inst._elem);
+        this.elem.appendChild(inst.elem);
+    }
+
+    protected get elem() {
+        if (!this._elem) {
+            this._elem = this.createElement();
+        }
+        return this._elem;
     }
 
     public focus() {
-        this._elem.focus();
+        this.elem.focus();
     }
 
     // Insert passes the document element into which we want to insert our view. This is NOT an ivy object
@@ -34,7 +41,7 @@ export abstract class HtmlElement extends $Object {
     }
 
     public get hideable() {
-        return (this._elem.childNodes.length > 0);
+        return (this.elem.childNodes.length > 0);
     }
 
     public get hidden(): boolean {
@@ -47,22 +54,22 @@ export abstract class HtmlElement extends $Object {
 
     // Retrieve an attribute from the document element by its name
     public getAttribute(attribName) {
-        return this._elem.getAttribute(attribName);
+        return this.elem.getAttribute(attribName);
     }
 
     // Set an attribute on the document element by its name. val contains the value to set on the attribute
     public setAttribute(attribName, val) {
-        this._elem.setAttribute(attribName, val);
+        this.elem.setAttribute(attribName, val);
     }
 
     // Get the current event handler for a specific event (passed as a string in eventName)
     public getEventHandler(eventName) {
-        return this._elem[eventName];
+        return this.elem[eventName];
     }
 
     // Get the current event handler for a specific event (passed as a string in eventName)
     public setEventHandler(eventName, handler) {
-        this._elem[eventName] = handler;
+        this.elem[eventName] = handler;
     }
 
     // Every htmlElement must define the element type which it creates.
@@ -94,7 +101,7 @@ export abstract class ValueElement extends HtmlElement {
     }
 
     public set value(val) {
-        const _elem = this._elem;
+        const _elem = this.elem;
         // Don't waste our time we've already set this value. We don't want to re-display what is already displayed.
         if (_elem.innerHTML !== val) {
             _elem.innerHTML = val;
@@ -102,7 +109,7 @@ export abstract class ValueElement extends HtmlElement {
     }
 
     public get value() {
-        return this._elem.innerHTML;
+        return this.elem.innerHTML;
     }
 
 }
@@ -150,13 +157,13 @@ export class Button extends ValueElement {
     }
 
     public get value() {
-        return this._elem.value;
+        return this.elem.value;
     }
 
     public set value(val) {
         const _current = this.value;
         if (_current !== val) {
-            this._elem.value = val;
+            this.elem.value = val;
         }
     }
 
@@ -212,7 +219,7 @@ export class Select extends ValueElement {
         // We can't store the value in the option.value attribute, since it's always written as a string.
         // tslint:disable-next-line:no-string-literal
         _option["val"] = val;
-        this._elem.options.add(_option);
+        this.elem.options.add(_option);
     }
 
     // Builds an option list from the this.options function.
@@ -232,18 +239,18 @@ export class Select extends ValueElement {
     }
 
     public selectedIndex() {
-        return this._elem.selectedIndex;
+        return this.elem.selectedIndex;
     }
 
     public clearOptions() {
-        const _selectBox = this._elem;
+        const _selectBox = this.elem;
         for (let _i = _selectBox.length - 1; _i >= 0; _i--) {
             _selectBox.remove(_i);
         }
     }
 
     public options() {
-        return this._elem.options;
+        return this.elem.options;
     }
 
     public get value(): ValueElement {
@@ -255,7 +262,7 @@ export class Select extends ValueElement {
         const _options = this.options();
         for (_i = 0; _i < _options.length; _i++) {
             if (val === _options[_i].val) {
-                this._elem.selectedIndex = _i;
+                this.elem.selectedIndex = _i;
                 return;
             }
         }
@@ -306,13 +313,13 @@ export class StringInput extends Input {
     }
 
     get value() {
-        return this._elem.value;
+        return this.elem.value;
     }
 
     set value(val) {
         const _current = this.value;
         if (_current !== val) {
-            this._elem.value = val;
+            this.elem.value = val;
         }
     }
 }
@@ -328,13 +335,13 @@ export class NumberInput extends Input {
     }
 
     get value() {
-        return Number(this._elem.value);
+        return Number(this.elem.value);
     }
 
     set value(val) {
         const _current = this.value;
         if (_current !== Number(val)) {
-            this._elem.value = val;
+            this.elem.value = val;
         }
     }
 }
@@ -350,13 +357,13 @@ export class CheckboxInput extends Input {
     }
 
     get value() {
-        return Boolean(this._elem.value);
+        return Boolean(this.elem.value);
     }
 
     set value(val) {
         const _current = this.value;
         if (_current !== Boolean(val)) {
-            this._elem.value = val;
+            this.elem.value = val;
         }
     }
 }
@@ -372,7 +379,7 @@ export class DateInput extends Input {
     }
 
     public get value() {
-        let _val = this._elem.value;
+        let _val = this.elem.value;
         if (_val) {
             _val = toDateFromInputString(_val);
         } else {
@@ -389,7 +396,7 @@ export class DateInput extends Input {
         }
         const _current = this.value;
         if (val && (!_current || (_current.getTime() !== val.getTime()))) {
-            this._elem.value = toInputStringfromDate(val);
+            this.elem.value = toInputStringfromDate(val);
         }
     }
 }
@@ -401,7 +408,7 @@ export class DateInput extends Input {
 
 export abstract class View extends HtmlElement {
 
-    private _model: $Property = null;
+    protected _model: $Property = null;
 
     constructor(owner) {
         super(owner);
@@ -429,7 +436,7 @@ export abstract class View extends HtmlElement {
     }
 
     public insert(parentElem, refresh?) {
-        parentElem.appendChild(this._elem);
+        parentElem.appendChild(this.elem);
         if (this.is(View)) {
             if ((typeof refresh === "undefined") || refresh) {
                 this.refresh();
@@ -442,7 +449,7 @@ export abstract class View extends HtmlElement {
     protected abstract construct();
 
     public destroy() {
-        const _elem = this._elem;
+        const _elem = this.elem;
         while (_elem.firstChild) {
             _elem.removeChild(_elem.firstChild);
         }
@@ -528,5 +535,92 @@ export class DataPropertyView extends View {
         this.label.value = _model.caption;
         // Sets the input htmlElement to the current value of the model (a dataProperty).
         this.input.value = _model.displayValue;
+    }
+}
+
+export class ObjectView extends View {
+    public constructor(owner) {
+        super(owner);
+    }
+
+    public get model(): $Object {
+        return super.model as $Object;
+    }
+
+    public set model(mod: $Object) {
+        super.model = mod;
+    }
+
+    public construct() {
+        if (this.model) {
+            this.model.properties.forEach((prop: $Property) => {
+                if (prop.is($Collection)) {
+                    const view = $App.create<CollectionView>(CollectionView, this);
+                    view.model = prop as $Collection;
+                    this.appendChild(view);
+                } else if (prop.is($Object)) {
+                    const view = $App.create<ObjectView>(ObjectView, this);
+                    view.model = prop as $Object;
+                    this.appendChild(view);
+                } else if (prop.is($Value)) {
+                    const view = $App.create<DataPropertyView>(DataPropertyView, this);
+                    view.model = prop as $Value;
+                    this.appendChild(view);
+                }
+            });
+        }
+    }
+
+    public refreshMe() {
+    }
+
+    public refresh() {
+        this.refreshMe();
+        this.model.properties.forEach((prop: $Property) => {
+            prop.refreshViews();
+        });
+    }
+}
+export class CollectionView extends View {
+    public constructor(owner) {
+        super(owner);
+    }
+
+    public get model(): $Collection {
+        return super.model as $Collection;
+    }
+
+    public set model(mod: $Collection) {
+        super.model = mod as $Collection;
+    }
+
+    public construct() {
+        if (this.model) {
+            this.model.forEach((prop: $Property) => {
+                if (prop.is($Collection)) {
+                    const view = $App.create<CollectionView>(CollectionView, this);
+                    view.model = prop as $Collection;
+                    this.appendChild(view);
+                } else if (prop.is($Object)) {
+                    const view = $App.create<ObjectView>(ObjectView, this);
+                    view.model = prop as $Object;
+                    this.appendChild(view);
+                } else if (prop.is($Value)) {
+                    const view = $App.create<DataPropertyView>(DataPropertyView, this);
+                    view.model = prop as $Value;
+                    this.appendChild(view);
+                }
+            });
+        }
+    }
+
+    public refreshMe() {
+    }
+
+    public refresh() {
+        this.refreshMe();
+        this.model.forEach((prop: $Property) => {
+            prop.refreshViews();
+        });
     }
 }

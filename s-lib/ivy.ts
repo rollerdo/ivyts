@@ -116,7 +116,7 @@ export abstract class $Property {
 
     // Override createViewCollection to add a more sophisticated collection object.
     protected createViewCollection (): ViewCollection {
-        const _coll = new ViewCollection(this);
+        const _coll = $App.create<ViewCollection>(ViewCollection, this);
 
         // When we add the view, we need to set the view's model property
         _coll.on("itemAdded", (event) => {
@@ -131,7 +131,7 @@ export abstract class $Property {
     }
 
     // Iterates through all of the current views and refreshes them.
-    protected refreshViews () {
+    public refreshViews () {
         // Get out fast if there are no views
         if (this._views) {
             if (this._views.count) {
@@ -283,7 +283,7 @@ export class $PropertyCollection extends $StaticCollection {
 
 export abstract class $Object extends $Complex {
 
-    private _props = new $PropertyCollection();
+    private _props = $App.create<$PropertyCollection>($PropertyCollection, this);
 
     protected constructor(owner?) {
         super(owner);
