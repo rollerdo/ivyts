@@ -1,4 +1,4 @@
-import {decamelCase, enableEvents} from "./utils";
+import { decamelCase, enableEvents } from "./utils";
 import { View } from "./Views";
 
 export type forEachFunc = (mem, i) => void;
@@ -107,7 +107,7 @@ export abstract class $Property {
         return writer.write(this);
     }
 
-    public get views (): ViewCollection {
+    public get views(): ViewCollection {
         if (!this._views) {
             this._views = this.createViewCollection();
         }
@@ -115,7 +115,7 @@ export abstract class $Property {
     }
 
     // Override createViewCollection to add a more sophisticated collection object.
-    protected createViewCollection (): ViewCollection {
+    protected createViewCollection(): ViewCollection {
         const _coll = $App.create<ViewCollection>(ViewCollection, this);
 
         // When we add the view, we need to set the view's model property
@@ -131,7 +131,7 @@ export abstract class $Property {
     }
 
     // Iterates through all of the current views and refreshes them.
-    public refreshViews () {
+    public refreshViews() {
         // Get out fast if there are no views
         if (this._views) {
             if (this._views.count) {
@@ -148,30 +148,10 @@ export abstract class $Complex extends $Property {
     protected constructor(owner?) {
         super(owner);
     }
-}
 
-export abstract class $StaticCollection extends $Complex {
+    public abstract forEach(func: forEachFunc): void;
 
-    protected _props: $Property[] = [];
-
-    constructor(owner?) {
-        super(owner);
-    }
-
-    public get count(): number {
-        return this._props.length;
-    }
-
-    public forEach(func: forEachFunc): void {
-        const count = this.count;
-        for (let i: number = 0; i < count; i++) {
-            func.call(this, this._props[i], i);
-        }
-    }
-
-    public toArray(): $Property[] {
-        return this._props;
-    }
+    public abstract get count();
 
 }
 
@@ -249,22 +229,20 @@ export class $TypedCollection<T> extends $Collection {
 export class ViewCollection extends $TypedCollection<View> {
 }
 
-export class $PropertyCollection extends $StaticCollection {
+export abstract class $Object extends $Complex {
+
+    protected _props: $Property[] = [];
 
     private _names = {};
-
-    constructor(owner?) {
-        super(owner);
-    }
 
     public byName(n): $Property {
         return this._names[n] as $Property;
     }
 
-    public initProperties(obj: $Object): void {
+    public initProperties(): void {
         let _v: $Property, _n: string;
-        for (_n in obj) {
-            _v = obj[_n];
+        for (_n in this) {
+            _v = this[_n];
             if (_v instanceof $Property) {
                 // The only way I've figured out not to include private or protected members
                 // as properties is to identify them through their name. This means that they
@@ -279,24 +257,31 @@ export class $PropertyCollection extends $StaticCollection {
             }
         }
     }
-}
 
-export abstract class $Object extends $Complex {
+    public get count(): number {
+        return this._props.length;
+    }
 
-    private _props = $App.create<$PropertyCollection>($PropertyCollection, this);
+    public forEach(func: forEachFunc): void {
+        const count = this.count;
+        for (let i: number = 0; i < count; i++) {
+            func.call(this, this._props[i], i);
+        }
+    }
+
+    public toArray(): $Property[] {
+        return this._props;
+    }
 
     protected constructor(owner?) {
         super(owner);
 
         // Must be done after properties from all descendent classes have been added.
         this.on("created", function (event) {
-            this.properties.initProperties(this);
+            this.initProperties(this);
         });
     }
 
-    public get properties() {
-        return this._props;
-    }
 }
 
 export abstract class $Component extends $Object {
@@ -320,8 +305,8 @@ export abstract class $Persistent extends $Object {
 }
 
 export abstract class $App extends $Persistent {
-    public static create<T extends $Property>(c: {new(owner?: $Property): T}, owner?: $Property): T  {
-        const obj: T = new c (owner);
+    public static create<T extends $Property>(c: { new(owner?: $Property): T }, owner?: $Property): T {
+        const obj: T = new c(owner);
         obj.fire("created");
         return obj;
     }
@@ -535,7 +520,7 @@ export class $TextWriter extends $Writer<string> {
 
     protected writeObject(prop: $Object, level) {
         this._result += prop.displayValue + "\n";
-        prop.properties.forEach((p: $Property) => {
+        prop.forEach((p: $Property) => {
             this.writeProperties(p, level + 1);
         });
     }
@@ -577,7 +562,7 @@ export class $JSONWriter extends $Writer<string> {
 
     protected writeObject(prop: $Object) {
         this._result += "{";
-        prop.properties.forEach((p: $Property, i: number) => {
+        prop.forEach((p: $Property, i: number) => {
             if (i) {
                 this._result += ",";
             }

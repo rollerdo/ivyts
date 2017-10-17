@@ -553,7 +553,7 @@ export class ObjectView extends View {
 
     public construct() {
         if (this.model) {
-            this.model.properties.forEach((prop: $Property) => {
+            this.model.forEach((prop: $Property) => {
                 if (prop.is($Collection)) {
                     const view = $App.create<CollectionView>(CollectionView, this);
                     view.model = prop as $Collection;
@@ -576,7 +576,7 @@ export class ObjectView extends View {
 
     public refresh() {
         this.refreshMe();
-        this.model.properties.forEach((prop: $Property) => {
+        this.model.forEach((prop: $Property) => {
             prop.refreshViews();
         });
     }
