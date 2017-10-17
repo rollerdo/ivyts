@@ -357,13 +357,12 @@ export class CheckboxInput extends Input {
     }
 
     get value() {
-        return Boolean(this.elem.value);
+        return Boolean(this.elem.checked);
     }
 
     set value(val) {
-        const _current = this.value;
-        if (_current !== Boolean(val)) {
-            this.elem.value = val;
+        if (this.value !== Boolean(val)) {
+            this.elem.checked = val;
         }
     }
 }
@@ -509,7 +508,7 @@ export class DataPropertyView extends View {
         _inst.className = "input";
         // This updates the model when the input control changes
         _inst.on("changed", (event) => {
-            this.model.value = event.current;
+            this.model = event.current;
         });
 
         this.appendChild(_inst);

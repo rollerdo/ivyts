@@ -1,12 +1,24 @@
-import { $App, $String, $TextWriter, $Value } from "../s-lib/ivy";
+import { $App, $Boolean, $String, $TextWriter, $Value } from "../s-lib/ivy";
 import { Email, Person, Phone } from "../s-lib/person";
-import { ObjectView, Select, StringInput } from "../s-lib/views";
+import { DataPropertyView, ObjectView, Select, StringInput } from "../s-lib/views";
 
 function main() {
+    const frame = document.getElementById("frame");
+/*
+    const myBool = new $Boolean(undefined);
+    myBool.value = true;
+    const myView = $App.create<DataPropertyView>(DataPropertyView, undefined);
+    myBool.views.add(myView);
+    myView.insert(frame);
+    const myString = new $String(undefined);
+    myString.value = "testing";
+    const myStrView = $App.create<DataPropertyView>(DataPropertyView, undefined);
+    myString.views.add(myStrView);
+    myStrView.insert(frame);
+*/
     const person = createPerson();
     const objView = $App.create<ObjectView>(ObjectView, null);
     person.views.add(objView);
-    const frame = document.getElementById("frame");
     objView.insert(frame);
     objView.refresh();
 }
