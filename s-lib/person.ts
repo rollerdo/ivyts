@@ -58,8 +58,9 @@ export class Email extends Contact {
 }
 
 export class Phone extends Contact {
-    constructor(owner?) {
+    public constructor(owner?) {
         super(owner);
+        this.phoneType.options = {h: "home", w: "work", m: "mobile", f: "fax"};
     }
 
     public number = new $String(this);
@@ -87,10 +88,6 @@ const contactInfoClasses = {
     Email: {
         className: "Email",
         factory: function(owner) {return $App.create<Email>(Email, owner); }
-    },
-    Fax: {
-        className: "Fax",
-        factory: function(owner) {return $App.create<Fax>(Fax, owner); }
     },
     Phone: {
         className: "Phone",

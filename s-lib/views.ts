@@ -538,7 +538,58 @@ export class DataPropertyView extends View {
     }
 }
 
-export class ObjectView extends View {
+export abstract class ComplexView extends View {
+
+    protected _heading: ValueElement;
+
+    public get model(): $Complex {
+        return super.model as $Object;
+    }
+
+    public set model(mod: $Complex) {
+        super.model = mod;
+    }
+
+    public constructMe() {
+        this._heading = $App.create<DivLabel>(DivLabel, this);
+        this.appendChild(this._heading);
+    }
+
+    public construct() {
+        if (this.model) {
+            this.constructMe();
+            this.model.forEach((prop: $Property) => {
+                if (prop.is($Collection)) {
+                    const view = $App.create<CollectionView>(CollectionView, this);
+                    view.model = prop as $Collection;
+                    this.appendChild(view);
+                } else if (prop.is($Object)) {
+                    const view = $App.create<ObjectView>(ObjectView, this);
+                    view.model = prop as $Object;
+                    this.appendChild(view);
+                } else if (prop.is($Value)) {
+                    const view = $App.create<DataPropertyView>(DataPropertyView, this);
+                    view.model = prop as $Value;
+                    this.appendChild(view);
+                }
+            });
+        }
+    }
+
+    public refreshMe() {
+        this._heading.value = this.model.caption;
+    }
+
+    public refresh() {
+        this.refreshMe();
+        this.model.forEach((prop: $Property) => {
+            prop.refreshViews();
+        });
+    }
+
+}
+
+export class ObjectView extends ComplexView {
     public constructor(owner) {
         super(owner);
     }
@@ -551,37 +602,9 @@ export class ObjectView extends View {
         super.model = mod;
     }
 
-    public construct() {
-        if (this.model) {
-            this.model.forEach((prop: $Property) => {
-                if (prop.is($Collection)) {
-                    const view = $App.create<CollectionView>(CollectionView, this);
-                    view.model = prop as $Collection;
-                    this.appendChild(view);
-                } else if (prop.is($Object)) {
-                    const view = $App.create<ObjectView>(ObjectView, this);
-                    view.model = prop as $Object;
-                    this.appendChild(view);
-                } else if (prop.is($Value)) {
-                    const view = $App.create<DataPropertyView>(DataPropertyView, this);
-                    view.model = prop as $Value;
-                    this.appendChild(view);
-                }
-            });
-        }
-    }
-
-    public refreshMe() {
-    }
-
-    public refresh() {
-        this.refreshMe();
-        this.model.forEach((prop: $Property) => {
-            prop.refreshViews();
-        });
-    }
 }
-export class CollectionView extends View {
+
+export class CollectionView extends ComplexView {
     public constructor(owner) {
         super(owner);
     }
@@ -594,33 +617,4 @@ export class CollectionView extends View {
         super.model = mod as $Collection;
     }
 
-    public construct() {
-        if (this.model) {
-            this.model.forEach((prop: $Property) => {
-                if (prop.is($Collection)) {
-                    const view = $App.create<CollectionView>(CollectionView, this);
-                    view.model = prop as $Collection;
-                    this.appendChild(view);
-                } else if (prop.is($Object)) {
-                    const view = $App.create<ObjectView>(ObjectView, this);
-                    view.model = prop as $Object;
-                    this.appendChild(view);
-                } else if (prop.is($Value)) {
-                    const view = $App.create<DataPropertyView>(DataPropertyView, this);
-                    view.model = prop as $Value;
-                    this.appendChild(view);
-                }
-            });
-        }
-    }
-
-    public refreshMe() {
-    }
-
-    public refresh() {
-        this.refreshMe();
-        this.model.forEach((prop: $Property) => {
-            prop.refreshViews();
-        });
-    }
 }

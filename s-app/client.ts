@@ -5,7 +5,7 @@ import { ObjectView, Select, StringInput } from "../s-lib/views";
 function main() {
     const person = createPerson();
     const objView = $App.create<ObjectView>(ObjectView, null);
-    objView.model = person;
+    person.views.add(objView);
     const frame = document.getElementById("frame");
     objView.insert(frame);
     objView.refresh();
@@ -21,6 +21,7 @@ function createPerson(): Person {
     const phone: Phone = $App.create<Phone>(Phone, person);
     phone.number.value = "417-777-0601";
     phone.preferred.value = true;
+    phone.phoneType.value = "m";
     person.contacts.add(phone);
     let email = $App.create<Email>(Email, person);
     email.address.value = "w.d.roller@gmail.com";

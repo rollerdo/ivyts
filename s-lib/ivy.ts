@@ -168,6 +168,7 @@ export class $Collection extends $Complex {
     public add(prop: $Property): void {
         this._db[prop.key] = prop;
         this._count++;
+        this.fire({type: "itemAdded", target: prop});
     }
 
     public contains(key: any): boolean {
@@ -208,6 +209,7 @@ export class $Collection extends $Complex {
         // Todo: We need to determine if delete causes garbage collection issues.
         delete (this._db[prop.key]);
         this._count--;
+        this.fire({type: "itemRemoved", target: prop});
     }
 }
 
