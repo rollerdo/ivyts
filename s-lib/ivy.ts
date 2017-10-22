@@ -42,7 +42,7 @@ export abstract class $Property {
     private _clsName: string;
     private _key: string;
 
-    protected constructor(owner?) {
+    protected constructor(owner?: $Complex) {
         enableEvents(this);
         this._key = keyFactory.createID();
         this._owner = owner;
@@ -76,7 +76,7 @@ export abstract class $Property {
         return this._clsName;
     }
 
-    public set className(v) {
+    public set className(v: string) {
         this._clsName = v;
     }
 
@@ -94,6 +94,16 @@ export abstract class $Property {
 
     public get owner(): $Complex {
         return this._owner;
+    }
+
+    public get root(): $Complex {
+        let _root: $Complex = this.owner;
+        while (_root) {
+            if (_root.owner) {
+                _root = this.owner;
+            }
+        }
+        return _root;
     }
 
     public fromJSON(json: string) {
@@ -145,7 +155,7 @@ export abstract class $Property {
 
 export abstract class $Complex extends $Property {
 
-    protected constructor(owner?) {
+    protected constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -161,7 +171,7 @@ export class $Collection extends $Complex {
     protected _db: {} = {};
     private _factories;
 
-    constructor(owner?) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -275,25 +285,31 @@ export abstract class $Object extends $Complex {
         return this._props;
     }
 
-    protected constructor(owner?) {
+    protected constructor(owner?: $Complex) {
         super(owner);
 
         // Must be done after properties from all descendent classes have been added.
         this.on("created", function (event) {
             this.initProperties(this);
         });
-    }
 
+        this.on("propertyChanged", function (event) {
+            this.refreshViews();
+            if (this.owner) {
+                this.owner.fire({type: "propertyChanged", target: this });
+            }
+        });
+    }
 }
 
 export abstract class $Component extends $Object {
-    protected constructor(owner) {
+    protected constructor(owner?: $Complex) {
         super(owner);
     }
 }
 
 export abstract class $Persistent extends $Object {
-    protected constructor(owner?) {
+    protected constructor(owner?: $Complex) {
         super(owner);
         this.ID.value = idFactory.createID();
         this.on("created", function (event) {
@@ -312,7 +328,7 @@ export abstract class $App extends $Persistent {
         obj.fire("created");
         return obj;
     }
-    protected constructor(owner?) {
+    protected constructor(owner?: $Complex) {
         super(owner);
     }
 }
@@ -335,7 +351,7 @@ export abstract class $Value extends $Property {
     private _calc: boolean = false;
     private _options = null;
 
-    protected constructor(owner?) {
+    protected constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -362,6 +378,9 @@ export abstract class $Value extends $Property {
         if ((this._val !== pval) && this.validate(pval)) {
             this._val = pval;
             this.fire({ type: "changed", target: this, value: this._val });
+            if (this.owner) {
+                this.owner.fire({type: "propertyChanged", target: this, value: this._val});
+            }
             this.refreshViews();
         }
     }
@@ -377,7 +396,7 @@ export abstract class $Value extends $Property {
 
 export class $String extends $Value implements IValue<string> {
 
-    constructor(owner?) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -393,7 +412,7 @@ export class $String extends $Value implements IValue<string> {
 
 export class $Number extends $Value implements IValue<number> {
 
-    constructor(owner?) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -408,7 +427,7 @@ export class $Number extends $Value implements IValue<number> {
 
 export class $Date extends $Value implements IValue<Date> {
 
-    constructor(owner?) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -427,7 +446,7 @@ export class $Date extends $Value implements IValue<Date> {
 
 export class $Boolean extends $Value implements IValue<boolean> {
 
-    constructor(owner?) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -443,7 +462,7 @@ export class $Boolean extends $Value implements IValue<boolean> {
 
 export class $Any extends $Value implements IValue<any> {
 
-    constructor(owner?) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 

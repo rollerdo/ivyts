@@ -1,5 +1,5 @@
 import { $App, $Collection, $JSONReader, $JSONWriter,  $Object, $Property, $TextWriter, $Writer} from "../s-lib/ivy";
-import { Contact, Contacts, Email, Fax, Person, PersonalInfo as Info} from "../s-lib/person";
+import { Contact, Contacts, Email, Person, PersonalInfo as Info} from "../s-lib/person";
 import { PersonalName as Name, Phone } from "../s-lib/person";
 
 // const person: Person = $Property.Create<Person>(Person, null);
@@ -28,12 +28,6 @@ phone.number.value = "417-777-0601";
 phone.preferred.value = true;
 phone.phoneType.value = "mobile";
 contactInfo.add(phone);
-
-const fax = $App.create<Fax>(Fax, person);
-fax.phoneNumber.value = "417-777-2221";
-fax.preferred.value = true;
-fax.phoneType.value = "fax";
-contactInfo.add(fax);
 
 let writer: any;
 writer = new $TextWriter();

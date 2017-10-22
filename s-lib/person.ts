@@ -1,10 +1,10 @@
-import { $App, $Boolean, $Collection, $Component, $Date, $Number, $Persistent, $String } from "./ivy";
+import { $App, $Boolean, $Collection, $Complex, $Component, $Date, $Number, $Persistent, $String } from "./ivy";
 import { $TypedCollection } from "./ivy";
 import { age } from "./utils";
 
 export class PersonalName extends $Component {
 
-    constructor(owner?) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -18,7 +18,7 @@ export class PersonalName extends $Component {
 }
 
 export class PersonalInfo extends $Component {
-    constructor(owner?) {
+    constructor(owner?: $Complex) {
         super(owner);
         this.birthday.on("changed", () => {
             this.age.fire("evaluate");
@@ -38,7 +38,7 @@ export class PersonalInfo extends $Component {
 }
 
 export abstract class Contact extends $Persistent {
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -46,19 +46,22 @@ export abstract class Contact extends $Persistent {
 }
 
 export class Email extends Contact {
-    constructor(owner?) {
+    constructor(owner?: $Complex) {
         super(owner);
+        this.emailType.options = {p: "personal", w: "work"};
     }
 
     public address = new $String(this);
+    public emailType = new $String(this);
 
     get displayValue(): any {
-        return this.address.value + (this.preferred.value ? " (preferred)" : "");
+        return this.address.value + (this.preferred.value ? " (preferred)" : "") + " (" +
+            this.emailType.options[this.emailType.value] + ")";
     }
 }
 
 export class Phone extends Contact {
-    public constructor(owner?) {
+    public constructor(owner?: $Complex) {
         super(owner);
         this.phoneType.options = {h: "home", w: "work", m: "mobile", f: "fax"};
     }
@@ -67,20 +70,8 @@ export class Phone extends Contact {
     public phoneType = new $String(this);
 
     get displayValue(): any {
-        return this.number.value + (this.preferred.value ? " (preferred)" : "");
-    }
-}
-
-export class Fax extends Contact {
-    constructor(owner?) {
-        super(owner);
-    }
-
-    public phoneNumber = new $String(this);
-    public phoneType = new $String(this);
-
-    get displayValue(): any {
-        return this.phoneNumber.value + (this.preferred.value ? " (preferred)" : "");
+        return this.number.value + ((this.preferred.value ? " (preferred)" : "")) + " (" +
+            this.phoneType.options[this.phoneType.value] + ")";
     }
 }
 
@@ -100,7 +91,7 @@ export class Contacts extends $TypedCollection<Contact> {
 
 export class Person extends $Persistent {
 
-    constructor(owner?) {
+    constructor(owner?: $Complex) {
         super(owner);
         this.on("created", (event) => {
             this.contacts.factories = contactInfoClasses;

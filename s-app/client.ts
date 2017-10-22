@@ -38,10 +38,12 @@ function createPerson(): Person {
     let email = $App.create<Email>(Email, person);
     email.address.value = "w.d.roller@gmail.com";
     email.preferred.value = true;
+    email.emailType.value = "p";
     person.contacts.add(email);
     email = $App.create<Email>(Email, person);
     email.address.value = "doug.roller@essets.com";
     email.preferred.value = false;
+    email.emailType.value = "w";
     person.contacts.add(email);
     return person;
 }

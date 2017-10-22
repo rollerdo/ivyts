@@ -7,7 +7,7 @@ export abstract class HtmlElement extends $Object {
     private _elem;
     protected _hidden: boolean = false;
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
         this.on("created", () => {
             this._elem = this.createElement();
@@ -79,7 +79,7 @@ export abstract class HtmlElement extends $Object {
 // An unanadorned div, the simplest particle in our atomic model
 export class Div extends HtmlElement {
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -96,7 +96,7 @@ export class Div extends HtmlElement {
 
 export abstract class ValueElement extends HtmlElement {
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -116,7 +116,7 @@ export abstract class ValueElement extends HtmlElement {
 
 export class Label extends ValueElement {
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -130,7 +130,7 @@ export class Label extends ValueElement {
 
 export class DivLabel extends ValueElement {
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -141,7 +141,7 @@ export class DivLabel extends ValueElement {
 
 export class Icon extends ValueElement {
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -152,7 +152,7 @@ export class Icon extends ValueElement {
 
 export class Button extends ValueElement {
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -179,7 +179,7 @@ export class Button extends ValueElement {
 
 export class Select extends ValueElement {
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
         this.on("created", () => {
             //            this.initializeOptions({ usa: "USA", cr: "Costa Rica" });
@@ -272,7 +272,7 @@ export class Select extends ValueElement {
 // An input class for the HTML input control
 export abstract class Input extends ValueElement {
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -285,26 +285,33 @@ export abstract class Input extends ValueElement {
         const _elem = document.createElement("input") as HTMLInputElement;
         _elem.setAttribute("type", this.inputType());
 
-        // Captures the onblur event from the input element and fires it in the context of this instance.
-        _elem.onblur = (ev) => {
-            this.fire({ type: "blurred", event: ev });
-            this._exitVal = this.value;
-            if (this._exitVal !== this._entryVal) {
-                this.fire({ type: "changed", target: this, previous: this._entryVal, current: this._exitVal });
-            }
-        };
+        if (this.is(CheckboxInput)) {
+            _elem.onclick = (ev) => {
+                this.fire({ type: "changed", target: this, previous: this._entryVal, current: _elem.checked });
+            };
+        } else {
 
-        _elem.onfocus = (ev) => {
-            this.fire({ type: "focused", event: ev });
-            this._entryVal = this.value;
-        };
+            // Captures the onblur event from the input element and fires it in the context of this instance.
+            _elem.onblur = (ev) => {
+                this.fire({ type: "blurred", event: ev });
+                this._exitVal = this.value;
+                if (this._exitVal !== this._entryVal) {
+                    this.fire({ type: "changed", target: this, previous: this._entryVal, current: this._exitVal });
+                }
+            };
+
+            _elem.onfocus = (ev) => {
+                this.fire({ type: "focused", event: ev });
+                this._entryVal = this.value;
+            };
+        }
         return _elem;
     }
 }
 
 export class StringInput extends Input {
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -326,7 +333,7 @@ export class StringInput extends Input {
 
 export class NumberInput extends Input {
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -348,7 +355,7 @@ export class NumberInput extends Input {
 
 export class CheckboxInput extends Input {
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -369,7 +376,7 @@ export class CheckboxInput extends Input {
 
 export class DateInput extends Input {
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -409,7 +416,7 @@ export abstract class View extends HtmlElement {
 
     protected _model: $Property = null;
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
     protected createElement() {
@@ -466,7 +473,7 @@ export abstract class View extends HtmlElement {
 
 export class DataPropertyView extends View {
 
-    constructor(owner) {
+    constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -508,7 +515,7 @@ export class DataPropertyView extends View {
         _inst.className = "input";
         // This updates the model when the input control changes
         _inst.on("changed", (event) => {
-            this.model = event.current;
+            this.model.value = event.current;
         });
 
         this.appendChild(_inst);
@@ -529,11 +536,10 @@ export class DataPropertyView extends View {
     // this.refresh() makes the view "come to life" by updating each of its htmlElement components with the appropriate
     // data from its model property;
     public refresh() {
-        const _model = this.model;
         // Sets the label htmlElement to the model's caption property.
-        this.label.value = _model.caption;
+        this.label.value = this.model.caption;
         // Sets the input htmlElement to the current value of the model (a dataProperty).
-        this.input.value = _model.displayValue;
+        this.input.value = this.model.displayValue;
     }
 }
 
@@ -549,14 +555,14 @@ export abstract class ComplexView extends View {
         super.model = mod;
     }
 
-    public constructMe() {
+    public constructHeading() {
         this._heading = $App.create<DivLabel>(DivLabel, this);
         this.appendChild(this._heading);
     }
 
     public construct() {
         if (this.model) {
-            this.constructMe();
+            this.constructHeading();
             this.model.forEach((prop: $Property) => {
                 if (prop.is($Collection)) {
                     const view = $App.create<CollectionView>(CollectionView, this);
@@ -575,12 +581,12 @@ export abstract class ComplexView extends View {
         }
     }
 
-    public refreshMe() {
-        this._heading.value = this.model.caption;
+    public refreshHeading() {
+        this._heading.value = this.model.caption + ": " + this.model.displayValue;
     }
 
     public refresh() {
-        this.refreshMe();
+        this.refreshHeading();
         this.model.forEach((prop: $Property) => {
             prop.refreshViews();
         });
@@ -589,7 +595,7 @@ export abstract class ComplexView extends View {
 }
 
 export class ObjectView extends ComplexView {
-    public constructor(owner) {
+    public constructor(owner?: $Complex) {
         super(owner);
     }
 
@@ -604,7 +610,7 @@ export class ObjectView extends ComplexView {
 }
 
 export class CollectionView extends ComplexView {
-    public constructor(owner) {
+    public constructor(owner?: $Complex) {
         super(owner);
     }
 

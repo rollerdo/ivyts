@@ -1,0 +1,329 @@
+.fg-white { color: #ffffff }
+.fg-green { color: #39bf7c }
+.fg-dkGreen { color: #2e9963 }
+.fg-ltGreen { color: #41d98d }
+.fg-hlGreen {color: #b9ebd2}
+.fg-orange { color: #e59a58 }
+.fg-ltOrange { color: #ffaf66 }
+.fg-navy { color: #34495e  }
+.fg-gray { color: #bdc3c7 }
+.fg-dkGray { color: #797d7f }
+.fg-ltGray { color: #ecf0f1 }
+.fg-hlGray {color: #f9fafb}
+
+.bg-white { background-color: #ffffff }
+.bg-green { background-color: #39bf7c }
+.bg-dkGreen { background-color: #2e9963 }
+.bg-ltGreen { background-color: #41d98d }
+.bg-hlGreen {background-color: #b9ebd2}
+.bg-orange { background-color: #e59a58 }
+.bg-ltOrange { background-color: #ffaf66 }
+.bg-navy { background-color: #34495e  }
+.bg-gray { background-color: #bdc3c7 }
+.bg-dkGray { background-color: #797d7f }
+.bg-ltGray { background-color: #ecf0f1 }
+.bg-hlGray {background-color: #f9fafb}
+
+
+* {
+    box-sizing: border-box;
+    margin: 0px;
+}
+
+body{
+    font-family: sans-serif;
+    font-size: 10pt;
+    background: black;
+}
+
+
+.dialogFrame{
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 100; /* Or as high as required to be on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: scroll; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,.1); /* Black w/ opacity */
+}
+
+.dialogWindow {
+    width: 30%; /* Could be more or less, depending on screen size */
+    min-width: 370px;
+    z-index: 101;
+    border: 1px solid #888;
+    overflow: scroll;
+    background-color: #fefefe; /* make the background slightly darker than the main window */
+    padding-bottom: 20px; /* to allow for the taller buttons */
+    margin: 10% auto; /* centered */
+}
+
+.main{
+    width:100%;
+    height: 100%;
+}
+.banner{
+    width: 100%;
+    height: 60px;
+    background-color: #2c3e50;
+}
+.logo{
+    color: #39bf7c;
+    background-color: #2c3e50;
+    float: left;
+    font-size: medium;
+    width:80px;
+    text-align: center;
+    height: 60px;
+    line-height: 60px;
+}
+.menu{
+    width:calc(100% - 180px);
+    float: left;
+}
+.menu-item{
+    color: #39bf7c;
+    float: left;
+    background-color: #2c3e50;
+    font-size: medium;
+    width:100px;
+    text-align: center;
+    height: 60px;
+    line-height: 60px
+}
+.settings{
+    float:right;
+}
+.settings-item{
+    width:50px;
+    float: left;
+    color: #39bf7c;
+    background-color: #2c3e50;
+    float: left;
+    font-size: x-large;
+    width:50px;
+    text-align: center;
+    height: 60px;
+    line-height: 60px
+}
+.ico{
+    padding-top:16px;
+}
+.selected{
+    color:#eeeeee;
+}
+.logo:hover{
+    cursor: pointer;
+    color: #eeeeee;
+}
+.menu-item:hover{
+    cursor: pointer;
+    color: #eeeeee;
+}
+.settings-item:hover{
+    cursor: pointer;
+    color: #eeeeee;
+}
+.tools{
+    width: 100%;
+    height: 60px;
+    background-color:#ecf0f1;
+}
+.ivy-body{
+    width: 100%;
+    height: calc(100% - 120px);
+    background-color:black;
+}
+.left-panel{
+    width: calc(100% - 500px);
+    height: 100%;
+    float:left;
+    overflow: hidden;
+    background-color: white;
+}
+.lp-banner{
+    padding-left: 15px;
+    padding-top: 20px;
+    height: 40px;
+    width: 100%;
+    border-bottom: thin solid #39bf7c;
+}
+.lp-banner-scrollable{
+    width: 1000px;
+    overflow: hidden;
+}
+.lp-body{
+    height: calc(100% - 80px);
+    width: 100%;
+}
+.lp-footer{
+    height: 40px;
+    width: 100%;
+    border-top: thin solid #39bf7c;
+}
+.right-panel{
+    width:500px;
+    height: 100%;
+    float:left;
+    background-color: white;
+    color: #2c3e50;
+}
+.rp-banner{
+    text-align: center;
+    background-color: #39bf7c;
+    color: white;
+    height: 40px;
+    line-height: 40px;
+    font-size: 12pt;
+    font-weight: normal;
+    width: 100%;
+    border-bottom: thin solid #39bf7c;
+    border-left: thin solid #39bf7c;
+}
+.rp-body{
+    height: calc(100% - 80px);
+    width: 100%;
+    border-left: thin solid #39bf7c;
+}
+.rp-footer{
+    height: 40px;
+    width: 100%;
+    border-top: thin solid #39bf7c;
+    border-left: thin solid #39bf7c;
+}
+.scrollable{
+    height: calc(100% - 80px);
+    padding-top: 10px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.list{
+    display: block;
+    width: 1000px;
+    height: auto;
+    overflow: hidden;
+}
+.list-heading{
+    float: left;
+    font-weight: bold;
+    overflow: hidden;
+}
+.list-cb{
+    margin-left: 6px;
+}
+.list-ico{
+    margin-left: 6px;
+    color: #39bf7c;
+}
+.list-ico:hover{
+    cursor: pointer;
+}
+.list-row{
+    display: table-row;
+    border-collapse: collapse;
+    table-layout: fixed;
+    height: 24px;
+    line-height: 24px;
+}
+.list-cell{
+    display: table-cell;
+    max-width: 210px;
+    line-height:14px;
+    padding-bottom:10px;
+    padding-left: 15px;
+}
+.action{
+    font-size: medium;
+    height: auto;
+    width: 150px;
+    margin-top: 9px;
+    margin-right: 10px;
+    float: right;
+}
+.action:hover{
+    cursor: pointer;
+}
+
+.toggleButton{
+    display: none;
+}
+.accordion{
+    width:100%;
+}
+.accordion-entry{
+    padding: 5px;
+    border: thin darkgray solid;
+    background-color: #F4F0F0;
+}
+.accordion-entry:hover{
+    cursor: pointer;
+}
+.entry-main{
+    display: none;
+}
+.entry-topic{
+    font-size: 11pt;
+    margin-bottom: 3px;
+    font-weight: bold;
+    text-align: left;
+}
+.odd-entry{
+    background-color: white;
+}
+.entry-info{
+    width: 100%;
+    margin-top: 2px;
+    text-align: left;
+}
+.entry-ico{
+    font-size:13px;
+    padding-top:1px;
+    width: 20px;
+    height: 42px;
+    float: left;
+    color: #3F3F99;
+}
+.eic{
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+.location-ico{
+    margin-right: 10px;
+    color: #3F3F99;
+}
+
+
+@media screen and (max-width: 780px){
+    .menu-item{
+        height: 30px;
+        line-height: 30px;
+    }
+    .left-panel{
+        width:0;
+    }
+    .right-panel{
+        width:100%;
+    }
+    .toggleButton{
+        display: inline;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .banner{
+        height: 90px;
+    }
+    .logo, .settings-item{
+        line-height:90px;
+    }
+    .ivy-body{
+        height: calc(100% - 150px);
+    }
+    .ico{
+        padding-top: 32px;
+    }
+}
+
