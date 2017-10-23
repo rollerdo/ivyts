@@ -1,4 +1,4 @@
-import { $Any, $App, $Boolean, $Collection, $Complex, $Object, $Property, $String, $Value } from "./ivy";
+import { $Any, $App, $Boolean, $Collection, $Complex, $Date, $Object, $Property, $String, $Value } from "./ivy";
 import { foreachProp, toDateFromInputString, toInputStringfromDate } from "./utils";
 
 export abstract class HtmlElement extends $Object {
@@ -389,7 +389,7 @@ export class DateInput extends Input {
         if (_val) {
             _val = toDateFromInputString(_val);
         } else {
-            _val = null;
+            _val = undefined;
         }
         return _val;
     }
@@ -414,7 +414,7 @@ export class DateInput extends Input {
 
 export abstract class View extends HtmlElement {
 
-    protected _model: $Property = null;
+    protected _model: $Property = undefined;
 
     constructor(owner?: $Complex) {
         super(owner);
@@ -537,9 +537,19 @@ export class DataPropertyView extends View {
     // data from its model property;
     public refresh() {
         // Sets the label htmlElement to the model's caption property.
-        this.label.value = this.model.caption;
+        if (this.label.value !== this.model.caption) {
+            this.label.value = this.model.caption;
+        }
         // Sets the input htmlElement to the current value of the model (a dataProperty).
-        this.input.value = this.model.displayValue;
+        // If no input has been set, set it
+        if  (
+            (typeof this.input.value === "undefined") ||
+            // If the input is not a date, we just compare the values
+            (!this.model.is($Date) && (this.input.value !== this.model.displayValue)) ||
+            // In order to avoid updating two date instances set to the same value, we use getTime()
+            (this.model.is($Date) && (this.input.value.getTime() !== (this.model as $Date).value.getTime()))) {
+                this.input.value = this.model.displayValue;
+        }
     }
 }
 
@@ -582,7 +592,10 @@ export abstract class ComplexView extends View {
     }
 
     public refreshHeading() {
-        this._heading.value = this.model.caption + ": " + this.model.displayValue;
+        const v = this.model.caption + ": " + this.model.displayValue;
+        if (v !== this._heading.value) {
+            this._heading.value = v;
+        }
     }
 
     public refresh() {

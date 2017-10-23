@@ -7,7 +7,7 @@ export function decamelCase(s: string): string {
 // Computes the age of this date in years.
 export function age(dateNow: Date, dateThen: Date): number {
     if (!dateThen) {
-        return null;
+        return undefined;
     }
     let _age = dateNow.getFullYear() - dateThen.getFullYear();
     const m = dateNow.getMonth() - dateThen.getMonth();

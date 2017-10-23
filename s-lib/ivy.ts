@@ -117,6 +117,10 @@ export abstract class $Property {
         return writer.write(this);
     }
 
+    public get readOnly(): boolean {
+        return false;
+    }
+
     public get views(): ViewCollection {
         if (!this._views) {
             this._views = this.createViewCollection();
@@ -133,9 +137,9 @@ export abstract class $Property {
             event.target.model = this;
         });
 
-        // Set the removed model to null to be a good garbage collection citizen.
+        // Set the removed model to undefined to be a good garbage collection citizen.
         _coll.on("itemRemoved", (event) => {
-            event.target.model = null;
+            event.target.model = undefined;
         });
         return _coll;
     }
@@ -319,7 +323,7 @@ export abstract class $Persistent extends $Object {
         });
     }
 
-    public ID = new $String(this);
+    public ID = new $ID(this);
 }
 
 export abstract class $App extends $Persistent {
@@ -349,7 +353,7 @@ export abstract class $Value extends $Property {
 
     private _val: any;
     private _calc: boolean = false;
-    private _options = null;
+    private _options = undefined;
 
     protected constructor(owner?: $Complex) {
         super(owner);
@@ -408,6 +412,12 @@ export class $String extends $Value implements IValue<string> {
         return "string";
     }
 
+}
+
+export class $ID extends $String {
+    public get readOnly() {
+        return true;
+    }
 }
 
 export class $Number extends $Value implements IValue<number> {

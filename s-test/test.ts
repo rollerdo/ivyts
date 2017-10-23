@@ -2,8 +2,8 @@ import { $App, $Collection, $JSONReader, $JSONWriter,  $Object, $Property, $Text
 import { Contact, Contacts, Email, Person, PersonalInfo as Info} from "../s-lib/person";
 import { PersonalName as Name, Phone } from "../s-lib/person";
 
-// const person: Person = $Property.Create<Person>(Person, null);
-const person = $App.create<Person>(Person, null);
+// const person: Person = $Property.Create<Person>(Person, undefined);
+const person = $App.create<Person>(Person);
 const name: Name = person.name;
 const info: Info = person.personalInfo;
 const contactInfo: Contacts = person.contacts;

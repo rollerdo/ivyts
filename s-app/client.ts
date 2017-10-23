@@ -17,14 +17,14 @@ function main() {
     myStrView.insert(frame);
 */
     const person = createPerson();
-    const objView = $App.create<ObjectView>(ObjectView, null);
+    const objView = $App.create<ObjectView>(ObjectView);
     person.views.add(objView);
     objView.insert(frame);
     objView.refresh();
 }
 
 function createPerson(): Person {
-    const person: Person = $App.create<Person>(Person, null);
+    const person: Person = $App.create<Person>(Person);
     person.name.first.value = "William";
     person.name.middle.value = "Douglas";
     person.name.last.value = "Roller";
