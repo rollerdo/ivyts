@@ -9,10 +9,6 @@ export abstract class HtmlElement extends $Object {
 
     constructor(owner?: $Complex) {
         super(owner);
-        this.on("created", () => {
-            this._elem = this.createElement();
-        });
-
     }
 
     // Encapsulates the document model's appendChild
@@ -30,6 +26,10 @@ export abstract class HtmlElement extends $Object {
         return this._elem;
     }
 
+    public get classList() {
+        return this.elem.classList;
+    }
+
     public focus() {
         this.elem.focus();
     }
@@ -37,7 +37,7 @@ export abstract class HtmlElement extends $Object {
     // Insert passes the document element into which we want to insert our view. This is NOT an ivy object
     // but a normal HTML document element, so we pass it the pointer to our document element.
     public insert(parentElem, refresh?) {
-        parentElem.appendChild(this._elem);
+        parentElem.appendChild(this.elem);
     }
 
     public get hideable() {
@@ -415,9 +415,24 @@ export class DateInput extends Input {
 export abstract class View extends HtmlElement {
 
     protected _model: $Property = undefined;
+    protected _shouldRefresh = true;
+    protected _level = 0;
+
+    public get level() {
+        return this._level;
+    }
 
     constructor(owner?: $Complex) {
         super(owner);
+        this.on("created", () => {
+            if (this.owner) {
+                const cv: ComplexView = this.owner as ComplexView;
+                this._level = cv.level + 1;
+                this.elem.classList.add("level-" + this._level);
+            } else {
+                this.elem.classList.add("level-0");
+            }
+        });
     }
     protected createElement() {
         return document.createElement("div");
@@ -469,6 +484,14 @@ export abstract class View extends HtmlElement {
     // in the data held by the existing model.
     public refresh() {
     }
+
+    public get shouldRefresh() {
+        return this._shouldRefresh;
+    }
+
+    public set shouldRefresh(val: boolean) {
+        this._shouldRefresh = val;
+    }
 }
 
 export class DataPropertyView extends View {
@@ -487,10 +510,12 @@ export class DataPropertyView extends View {
     protected construct() {
         // Create a label for this view
         this.label = this.createLabel();
+        this.label.classList.add("caption");
 
         // And an input control
         this.input = this.createInput();
-    }
+        this.input.classList.add("value");
+}
 
     // Override in subclasses to created the desired label field
     protected createLabel = function () {
@@ -540,23 +565,30 @@ export class DataPropertyView extends View {
         if (this.label.value !== this.model.caption) {
             this.label.value = this.model.caption;
         }
+        this.input.value = this.model.displayValue;
         // Sets the input htmlElement to the current value of the model (a dataProperty).
         // If no input has been set, set it
-        if  (
+/*
+        if (
             (typeof this.input.value === "undefined") ||
             // If the input is not a date, we just compare the values
             (!this.model.is($Date) && (this.input.value !== this.model.displayValue)) ||
             // In order to avoid updating two date instances set to the same value, we use getTime()
             (this.model.is($Date) && (this.input.value.getTime() !== (this.model as $Date).value.getTime()))) {
-                this.input.value = this.model.displayValue;
+            this.input.value = this.model.displayValue;
         }
+*/
     }
 }
 
 export abstract class ComplexView extends View {
 
-    protected _heading: ValueElement;
+    constructor(owner?) {
+        super(owner);
+    }
 
+    protected _caption: ValueElement;
+    protected _value: ValueElement;
     public get model(): $Complex {
         return super.model as $Object;
     }
@@ -566,8 +598,13 @@ export abstract class ComplexView extends View {
     }
 
     public constructHeading() {
-        this._heading = $App.create<DivLabel>(DivLabel, this);
-        this.appendChild(this._heading);
+        this._caption = $App.create<DivLabel>(DivLabel, this);
+        this._caption.classList.add("caption");
+        this.appendChild(this._caption);
+        this._value = $App.create<DivLabel>(DivLabel, this);
+        this._value.classList.add("value");
+        this._value.classList.add("heading");
+        this.appendChild(this._value);
     }
 
     public construct() {
@@ -576,14 +613,17 @@ export abstract class ComplexView extends View {
             this.model.forEach((prop: $Property) => {
                 if (prop.is($Collection)) {
                     const view = $App.create<CollectionView>(CollectionView, this);
+                    view.classList.add("collection");
                     view.model = prop as $Collection;
                     this.appendChild(view);
                 } else if (prop.is($Object)) {
                     const view = $App.create<ObjectView>(ObjectView, this);
+                    view.classList.add("object");
                     view.model = prop as $Object;
                     this.appendChild(view);
                 } else if (prop.is($Value)) {
                     const view = $App.create<DataPropertyView>(DataPropertyView, this);
+                    view.classList.add("property");
                     view.model = prop as $Value;
                     this.appendChild(view);
                 }
@@ -592,17 +632,18 @@ export abstract class ComplexView extends View {
     }
 
     public refreshHeading() {
-        const v = this.model.caption + ": " + this.model.displayValue;
-        if (v !== this._heading.value) {
-            this._heading.value = v;
-        }
+        this._caption.value = this.model.caption;
+        this._value.value = this.model.displayValue;
     }
 
     public refresh() {
         this.refreshHeading();
-        this.model.forEach((prop: $Property) => {
-            prop.refreshViews();
-        });
+        if (this._shouldRefresh) {
+            this.model.forEach((prop: $Property) => {
+                prop.refreshViews();
+            });
+            this._shouldRefresh = false;
+        }
     }
 
 }
