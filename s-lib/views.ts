@@ -1,7 +1,8 @@
-import { $Any, $App, $Boolean, $Collection, $Complex, $Date, $Object, $Property, $String, $Value } from "./ivy";
+import { $Any, $App, $Boolean, $Collection, $Complex, $Date } from "./ivy";
+import { $Object, $Property, $String, $Value } from "./ivy";
 import { foreachProp, toDateFromInputString, toInputStringfromDate } from "./utils";
 
-export abstract class HtmlElement extends $Object {
+export abstract class HtElement extends $Object {
 
     private _oldDisplay: string;
     private _elem;
@@ -72,12 +73,12 @@ export abstract class HtmlElement extends $Object {
         this.elem[eventName] = handler;
     }
 
-    // Every htmlElement must define the element type which it creates.
+    // Every HtElement must define the element type which it creates.
     protected abstract createElement();
 }
 
 // An unanadorned div, the simplest particle in our atomic model
-export class Div extends HtmlElement {
+export class Div extends HtElement {
 
     constructor(owner?: $Complex) {
         super(owner);
@@ -94,7 +95,7 @@ export class Div extends HtmlElement {
 // of the innerHTML property. (See the ivc.input type below, which overrides get/set, which in its case, is an attribute
 // on the input document element
 
-export abstract class ValueElement extends HtmlElement {
+export abstract class ValueElement extends HtElement {
 
     constructor(owner?: $Complex) {
         super(owner);
@@ -408,11 +409,11 @@ export class DateInput extends Input {
 }
 
 // A view manages the display of a single model. It is always contained within a div, which wraps the various
-// document elements. It is important to note that htmlElements, such as ivv.label and ivv.input, are NOT
-// ivv.views, but instead are managed by view. Simply put, all views are htmlElements, but not all htmlElements
+// document elements. It is important to note that HtElements, such as ivv.label and ivv.input, are NOT
+// ivv.views, but instead are managed by view. Simply put, all views are HtElements, but not all HtElements
 // are views.
 
-export abstract class View extends HtmlElement {
+export abstract class View extends HtElement {
 
     protected _model: $Property = undefined;
     protected _shouldRefresh = true;
@@ -438,7 +439,7 @@ export abstract class View extends HtmlElement {
         return document.createElement("div");
     }
 
-    public get model() {
+    public get model(): $Property {
         return this._model;
     }
 
@@ -480,7 +481,7 @@ export abstract class View extends HtmlElement {
         return "view";
     }
 
-    // this.refresh() updates the data displayed by the view and its associated htmlElements. It responds to changes
+    // this.refresh() updates the data displayed by the view and its associated HtElements. It responds to changes
     // in the data held by the existing model.
     public refresh() {
     }
@@ -494,10 +495,37 @@ export abstract class View extends HtmlElement {
     }
 }
 
-export class DataPropertyView extends View {
+export abstract class LabelView extends View {
+    public label: ValueElement;
+    public value: ValueElement;
+
+    protected construct() {
+        // Create a label for this view
+        this.label = this.createLabel();
+        this.label.classList.add("label");
+
+        // And an input control
+        this.value = this.createValue();
+        this.value.classList.add("value");
+    }
+
+    protected abstract createLabel(): ValueElement;
+    protected abstract createValue(): ValueElement;
+
+}
+
+export class DataPropertyView extends LabelView {
 
     constructor(owner?: $Complex) {
         super(owner);
+    }
+
+    public get model(): $Value {
+        return super.model as $Value;
+    }
+
+    public set model(mod: $Value) {
+        super.model = mod;
     }
 
     private typeTable = {
@@ -507,26 +535,16 @@ export class DataPropertyView extends View {
         string: function (owner) { return $App.create<StringInput>(StringInput, owner); },
     };
 
-    protected construct() {
-        // Create a label for this view
-        this.label = this.createLabel();
-        this.label.classList.add("caption");
-
-        // And an input control
-        this.input = this.createInput();
-        this.input.classList.add("value");
-}
-
     // Override in subclasses to created the desired label field
-    protected createLabel = function () {
+    protected createLabel() {
         const _inst = $App.create<DivLabel>(DivLabel, this);
         _inst.className = "label";
         this.appendChild(_inst);
         return _inst;
-    };
+    }
 
     // Override in subclasses to create the desired input field.
-    protected createInput = function () {
+    protected createValue() {
         let _inst;
         const _model = this.model;
         if (_model.readOnly) {
@@ -537,7 +555,7 @@ export class DataPropertyView extends View {
         } else {
             _inst = this.typeTable[this.dataType](this);
         }
-        _inst.className = "input";
+        _inst.className = "value";
         // This updates the model when the input control changes
         _inst.on("changed", (event) => {
             this.model.value = event.current;
@@ -546,49 +564,41 @@ export class DataPropertyView extends View {
         this.appendChild(_inst);
 
         return _inst;
-    };
+    }
 
     get dataType() {
         return (this.model as $Value).dataType;
     }
 
-    // The label for the dataProperty (by default displays the dataProperty's caption())
-    public label;
-
-    // The input field for the dataProperty
-    public input;
-
-    // this.refresh() makes the view "come to life" by updating each of its htmlElement components with the appropriate
+   // this.refresh() makes the view "come to life" by updating each of its HtElement components with the appropriate
     // data from its model property;
     public refresh() {
-        // Sets the label htmlElement to the model's caption property.
+        // Sets the label HtElement to the model's caption property.
         if (this.label.value !== this.model.caption) {
             this.label.value = this.model.caption;
         }
-        this.input.value = this.model.displayValue;
-        // Sets the input htmlElement to the current value of the model (a dataProperty).
+        this.value.value = this.model.displayValue;
+        // Sets the input HtElement to the current value of the model (a dataProperty).
         // If no input has been set, set it
-/*
-        if (
-            (typeof this.input.value === "undefined") ||
-            // If the input is not a date, we just compare the values
-            (!this.model.is($Date) && (this.input.value !== this.model.displayValue)) ||
-            // In order to avoid updating two date instances set to the same value, we use getTime()
-            (this.model.is($Date) && (this.input.value.getTime() !== (this.model as $Date).value.getTime()))) {
-            this.input.value = this.model.displayValue;
-        }
-*/
+        /*
+                if (
+                    (typeof this.input.value === "undefined") ||
+                    // If the input is not a date, we just compare the values
+                    (!this.model.is($Date) && (this.input.value !== this.model.displayValue)) ||
+                    // In order to avoid updating two date instances set to the same value, we use getTime()
+                    (this.model.is($Date) && (this.input.value.getTime() !== (this.model as $Date).value.getTime()))) {
+                    this.input.value = this.model.displayValue;
+                }
+        */
     }
 }
 
-export abstract class ComplexView extends View {
+export abstract class ComplexView extends LabelView {
 
     constructor(owner?) {
         super(owner);
     }
 
-    protected _caption: ValueElement;
-    protected _value: ValueElement;
     public get model(): $Complex {
         return super.model as $Object;
     }
@@ -597,19 +607,23 @@ export abstract class ComplexView extends View {
         super.model = mod;
     }
 
-    public constructHeading() {
-        this._caption = $App.create<DivLabel>(DivLabel, this);
-        this._caption.classList.add("caption");
-        this.appendChild(this._caption);
-        this._value = $App.create<DivLabel>(DivLabel, this);
-        this._value.classList.add("value");
-        this._value.classList.add("heading");
-        this.appendChild(this._value);
+    protected createLabel() {
+        const _inst = $App.create<DivLabel>(DivLabel, this);
+        _inst.className = "label";
+        this.appendChild(_inst);
+        return _inst;
+    }
+
+    protected createValue() {
+        const _inst = $App.create<DivLabel>(DivLabel, this);
+        _inst.className = "value";
+        this.appendChild(_inst);
+        return _inst;
     }
 
     public construct() {
         if (this.model) {
-            this.constructHeading();
+            super.construct();
             this.model.forEach((prop: $Property) => {
                 if (prop.is($Collection)) {
                     const view = $App.create<CollectionView>(CollectionView, this);
@@ -632,8 +646,8 @@ export abstract class ComplexView extends View {
     }
 
     public refreshHeading() {
-        this._caption.value = this.model.caption;
-        this._value.value = this.model.displayValue;
+        this.label.value = this.model.caption;
+        this.value.value = this.model.displayValue;
     }
 
     public refresh() {
