@@ -50,7 +50,14 @@ export abstract class HtElement extends $Object {
     }
 
     public set hidden(val: boolean) {
-        this._hidden = val;
+        if (val && (!this._hidden)) {
+            this._oldDisplay = this.elem.style.display;
+            this.elem.style.display = "none" ;
+            this._hidden = val;
+        } else if ((!val) && this._hidden ) {
+            this._hidden = val;
+            this.elem.style.display = this._oldDisplay;
+        }
     }
 
     // Retrieve an attribute from the document element by its name
@@ -71,6 +78,10 @@ export abstract class HtElement extends $Object {
     // Get the current event handler for a specific event (passed as a string in eventName)
     public setEventHandler(eventName, handler) {
         this.elem[eventName] = handler;
+    }
+
+    public get style() {
+        return this.elem.style;
     }
 
     // Every HtElement must define the element type which it creates.
@@ -239,11 +250,15 @@ export class Select extends ValueElement {
         }
     }
 
-    public selectedIndex() {
+    public get selectedIndex() {
         return this.elem.selectedIndex;
     }
 
-    public clearOptions() {
+        public set selectedIndex(index) {
+        this.elem.selectedIndex = index;
+    }
+
+public clearOptions() {
         const _selectBox = this.elem;
         for (let _i = _selectBox.length - 1; _i >= 0; _i--) {
             _selectBox.remove(_i);
@@ -255,7 +270,7 @@ export class Select extends ValueElement {
     }
 
     public get value(): ValueElement {
-        return this.options()[this.selectedIndex()].val;
+        return this.options()[this.selectedIndex].val;
     }
 
     public set value(val: ValueElement) {
@@ -263,7 +278,7 @@ export class Select extends ValueElement {
         const _options = this.options();
         for (_i = 0; _i < _options.length; _i++) {
             if (val === _options[_i].val) {
-                this.elem.selectedIndex = _i;
+                this.selectedIndex = _i;
                 return;
             }
         }
@@ -417,7 +432,7 @@ export abstract class View extends HtElement {
 
     protected _model: $Property = undefined;
     protected _shouldRefresh = true;
-    protected _level = 0;
+    protected _level: number;
 
     public get level() {
         return this._level;
@@ -429,9 +444,8 @@ export abstract class View extends HtElement {
             if (this.owner) {
                 const cv: ComplexView = this.owner as ComplexView;
                 this._level = cv.level + 1;
-                this.elem.classList.add("level-" + this._level);
             } else {
-                this.elem.classList.add("level-0");
+                this._level = 1;
             }
         });
     }
@@ -495,9 +509,9 @@ export abstract class View extends HtElement {
     }
 }
 
-export abstract class LabelView extends View {
+export abstract class ControlView extends View {
+    public control: ValueElement;
     public label: ValueElement;
-    public value: ValueElement;
 
     protected construct() {
         // Create a label for this view
@@ -505,16 +519,21 @@ export abstract class LabelView extends View {
         this.label.classList.add("label");
 
         // And an input control
-        this.value = this.createValue();
-        this.value.classList.add("value");
+        this.control = this.createControl();
+        this.control.classList.add("control");
     }
 
     protected abstract createLabel(): ValueElement;
-    protected abstract createValue(): ValueElement;
+    protected abstract createControl(): ValueElement;
+
+    public refresh() {
+        this.label.value = this.model.caption;
+        this.control.value = this.model.displayValue;
+    }
 
 }
 
-export class DataPropertyView extends LabelView {
+export class DataPropertyView extends ControlView {
 
     constructor(owner?: $Complex) {
         super(owner);
@@ -543,24 +562,29 @@ export class DataPropertyView extends LabelView {
         return _inst;
     }
 
-    // Override in subclasses to create the desired input field.
-    protected createValue() {
+    // Override in subclasses to create the desired control.
+    protected createControl() {
         let _inst;
         const _model = this.model;
         if (_model.readOnly) {
             _inst = $App.create<DivLabel>(DivLabel, this);
+            _inst.classList.add("readOnly");
         } else if (_model.options) {
             _inst = $App.create<Select>(Select, this);
             _inst.initializeOptions(_model.options);
+            _inst.classList.add("select");
         } else {
             _inst = this.typeTable[this.dataType](this);
+            _inst.classList.add("input");
         }
-        _inst.className = "value";
+        _inst.className = "control";
+        _inst.classList.add(this.dataType);
         // This updates the model when the input control changes
         _inst.on("changed", (event) => {
             this.model.value = event.current;
         });
 
+        this.classList.add("property");
         this.appendChild(_inst);
 
         return _inst;
@@ -570,34 +594,47 @@ export class DataPropertyView extends LabelView {
         return (this.model as $Value).dataType;
     }
 
-   // this.refresh() makes the view "come to life" by updating each of its HtElement components with the appropriate
-    // data from its model property;
-    public refresh() {
-        // Sets the label HtElement to the model's caption property.
-        if (this.label.value !== this.model.caption) {
-            this.label.value = this.model.caption;
-        }
-        this.value.value = this.model.displayValue;
-        // Sets the input HtElement to the current value of the model (a dataProperty).
-        // If no input has been set, set it
-        /*
-                if (
-                    (typeof this.input.value === "undefined") ||
-                    // If the input is not a date, we just compare the values
-                    (!this.model.is($Date) && (this.input.value !== this.model.displayValue)) ||
-                    // In order to avoid updating two date instances set to the same value, we use getTime()
-                    (this.model.is($Date) && (this.input.value.getTime() !== (this.model as $Date).value.getTime()))) {
-                    this.input.value = this.model.displayValue;
-                }
-        */
+}
+
+export class PropertyGroup extends ControlView {
+
+    public properties: Div;
+
+    protected createLabel() {
+        const _inst = $App.create<DivLabel>(DivLabel, this);
+        _inst.className = "label";
+        this.appendChild(_inst);
+        return _inst;
+    }
+
+    protected createControl() {
+        const _inst = $App.create<DivLabel>(DivLabel, this);
+        _inst.className = "control";
+        this.appendChild(_inst);
+        return _inst;
+    }
+
+    protected createPropertyGroup(): Div {
+        const _inst = $App.create<Div>(Div, this);
+        _inst.className = "properties";
+        _inst.classList.add("properties");
+        this.appendChild(_inst);
+        return _inst;
+    }
+
+    public construct() {
+        super.construct();
+        this.properties = this.createPropertyGroup();
     }
 }
 
-export abstract class ComplexView extends LabelView {
+export abstract class ComplexView extends View {
 
     constructor(owner?) {
         super(owner);
     }
+
+    public heading: PropertyGroup;
 
     public get model(): $Complex {
         return super.model as $Object;
@@ -607,52 +644,41 @@ export abstract class ComplexView extends LabelView {
         super.model = mod;
     }
 
-    protected createLabel() {
-        const _inst = $App.create<DivLabel>(DivLabel, this);
-        _inst.className = "label";
-        this.appendChild(_inst);
-        return _inst;
-    }
-
-    protected createValue() {
-        const _inst = $App.create<DivLabel>(DivLabel, this);
-        _inst.className = "value";
-        this.appendChild(_inst);
-        return _inst;
+    protected createHeading() {
+        const v: PropertyGroup = $App.create<PropertyGroup>(PropertyGroup, this);
+        v.classList.add("heading");
+        this.appendChild(v);
+        return v;
     }
 
     public construct() {
+        this.heading = this.createHeading();
+        this.heading.model = this.model;
         if (this.model) {
-            super.construct();
             this.model.forEach((prop: $Property) => {
+                let view: View;
                 if (prop.is($Collection)) {
-                    const view = $App.create<CollectionView>(CollectionView, this);
-                    view.classList.add("collection");
+                    view = $App.create<CollectionView>(CollectionView, this);
                     view.model = prop as $Collection;
-                    this.appendChild(view);
                 } else if (prop.is($Object)) {
-                    const view = $App.create<ObjectView>(ObjectView, this);
-                    view.classList.add("object");
+                    view = $App.create<ObjectView>(ObjectView, this);
                     view.model = prop as $Object;
-                    this.appendChild(view);
                 } else if (prop.is($Value)) {
-                    const view = $App.create<DataPropertyView>(DataPropertyView, this);
-                    view.classList.add("property");
+                    view = $App.create<DataPropertyView>(DataPropertyView, this);
                     view.model = prop as $Value;
-                    this.appendChild(view);
                 }
+                this.heading.properties.appendChild(view);
+                if (this.level > 2) {
+                    this.heading.properties.hidden = true;
+                }
+                view.style.paddingLeft = "15px";
             });
         }
     }
 
-    public refreshHeading() {
-        this.label.value = this.model.caption;
-        this.value.value = this.model.displayValue;
-    }
-
     public refresh() {
-        this.refreshHeading();
-        if (this._shouldRefresh) {
+        this.heading.refresh();
+        if (this.shouldRefresh) {
             this.model.forEach((prop: $Property) => {
                 prop.refreshViews();
             });
@@ -665,6 +691,7 @@ export abstract class ComplexView extends LabelView {
 export class ObjectView extends ComplexView {
     public constructor(owner?: $Complex) {
         super(owner);
+        this.classList.add("object");
     }
 
     public get model(): $Object {
@@ -680,6 +707,7 @@ export class ObjectView extends ComplexView {
 export class CollectionView extends ComplexView {
     public constructor(owner?: $Complex) {
         super(owner);
+        this.classList.add("collection");
     }
 
     public get model(): $Collection {

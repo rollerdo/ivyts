@@ -118,8 +118,12 @@ export abstract class $Property {
     }
 
     public get readOnly(): boolean {
-        return false;
+        return this._readOnly();
     }
+
+    protected _readOnly = function(){
+        return false;
+    };
 
     public get views(): ViewCollection {
         if (!this._views) {
