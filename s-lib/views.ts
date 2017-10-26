@@ -628,13 +628,11 @@ export class PropertyGroup extends ControlView {
     }
 }
 
-export abstract class ComplexView extends View {
+export abstract class ComplexView extends PropertyGroup {
 
     constructor(owner?) {
         super(owner);
     }
-
-    public heading: PropertyGroup;
 
     public get model(): $Complex {
         return super.model as $Object;
@@ -644,16 +642,8 @@ export abstract class ComplexView extends View {
         super.model = mod;
     }
 
-    protected createHeading() {
-        const v: PropertyGroup = $App.create<PropertyGroup>(PropertyGroup, this);
-        v.classList.add("heading");
-        this.appendChild(v);
-        return v;
-    }
-
     public construct() {
-        this.heading = this.createHeading();
-        this.heading.model = this.model;
+        super.construct();
         if (this.model) {
             this.model.forEach((prop: $Property) => {
                 let view: View;
@@ -667,9 +657,9 @@ export abstract class ComplexView extends View {
                     view = $App.create<DataPropertyView>(DataPropertyView, this);
                     view.model = prop as $Value;
                 }
-                this.heading.properties.appendChild(view);
+                this.properties.appendChild(view);
                 if (this.level > 2) {
-                    this.heading.properties.hidden = true;
+                    this.properties.hidden = true;
                 }
                 view.style.paddingLeft = "15px";
             });
@@ -677,7 +667,7 @@ export abstract class ComplexView extends View {
     }
 
     public refresh() {
-        this.heading.refresh();
+        super.refresh();
         if (this.shouldRefresh) {
             this.model.forEach((prop: $Property) => {
                 prop.refreshViews();
