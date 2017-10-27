@@ -1,4 +1,4 @@
-import { $Any, $App, $Boolean, $Collection, $Complex, $Date } from "./ivy";
+import { $Any, $App, $Boolean, $Collection, $Complex, $Date, $ID } from "./ivy";
 import { $Object, $Property, $String, $Value } from "./ivy";
 import { foreachProp, toDateFromInputString, toInputStringfromDate } from "./utils";
 
@@ -52,9 +52,9 @@ export abstract class HtElement extends $Object {
     public set hidden(val: boolean) {
         if (val && (!this._hidden)) {
             this._oldDisplay = this.elem.style.display;
-            this.elem.style.display = "none" ;
+            this.elem.style.display = "none";
             this._hidden = val;
-        } else if ((!val) && this._hidden ) {
+        } else if ((!val) && this._hidden) {
             this._hidden = val;
             this.elem.style.display = this._oldDisplay;
         }
@@ -73,6 +73,10 @@ export abstract class HtElement extends $Object {
     // Get the current event handler for a specific event (passed as a string in eventName)
     public getEventHandler(eventName) {
         return this.elem[eventName];
+    }
+
+    public set onclick(func) {
+        this.elem.onclick = func;
     }
 
     // Get the current event handler for a specific event (passed as a string in eventName)
@@ -254,11 +258,11 @@ export class Select extends ValueElement {
         return this.elem.selectedIndex;
     }
 
-        public set selectedIndex(index) {
+    public set selectedIndex(index) {
         this.elem.selectedIndex = index;
     }
 
-public clearOptions() {
+    public clearOptions() {
         const _selectBox = this.elem;
         for (let _i = _selectBox.length - 1; _i >= 0; _i--) {
             _selectBox.remove(_i);
@@ -528,7 +532,7 @@ export abstract class ControlView extends View {
 
     public refresh() {
         this.label.value = this.model.caption;
-        this.control.value = this.model.displayValue;
+        this.control.value = this.model.displayValue ? this.model.displayValue : "";
     }
 
 }
@@ -598,19 +602,36 @@ export class DataPropertyView extends ControlView {
 
 export class PropertyGroup extends ControlView {
 
+    constructor(owner?: $Complex) {
+        super(owner);
+        this.on("clicked", (event) => {
+            alert("clicked");
+        });
+    }
+
     public properties: Div;
 
     protected createLabel() {
         const _inst = $App.create<DivLabel>(DivLabel, this);
         _inst.className = "label";
+        _inst.classList.add("label");
         this.appendChild(_inst);
+        _inst.onclick = (ev) => {
+            this.properties.hidden = this.properties.hidden ? false : true;
+            ev.cancelBubble = true;
+        };
         return _inst;
     }
 
     protected createControl() {
         const _inst = $App.create<DivLabel>(DivLabel, this);
         _inst.className = "control";
+        _inst.classList.add("control");
         this.appendChild(_inst);
+        _inst.onclick = (ev) => {
+            this.properties.hidden = this.properties.hidden ? false : true;
+            ev.cancelBubble = true;
+        };
         return _inst;
     }
 
@@ -647,7 +668,9 @@ export abstract class ComplexView extends PropertyGroup {
         if (this.model) {
             this.model.forEach((prop: $Property) => {
                 let view: View;
-                if (prop.is($Collection)) {
+                if (prop.is($ID)) {
+                    // Ignore $IDs for now
+                } else if (prop.is($Collection)) {
                     view = $App.create<CollectionView>(CollectionView, this);
                     view.model = prop as $Collection;
                 } else if (prop.is($Object)) {
@@ -657,11 +680,13 @@ export abstract class ComplexView extends PropertyGroup {
                     view = $App.create<DataPropertyView>(DataPropertyView, this);
                     view.model = prop as $Value;
                 }
-                this.properties.appendChild(view);
-                if (this.level > 2) {
-                    this.properties.hidden = true;
+                if (view) {
+                    this.properties.appendChild(view);
+                    if (this.level > 3) {
+                        this.properties.hidden = true;
+                    }
+                    view.style.paddingLeft = "15px";
                 }
-                view.style.paddingLeft = "15px";
             });
         }
     }
@@ -672,7 +697,7 @@ export abstract class ComplexView extends PropertyGroup {
             this.model.forEach((prop: $Property) => {
                 prop.refreshViews();
             });
-            this._shouldRefresh = false;
+            this.shouldRefresh = false;
         }
     }
 

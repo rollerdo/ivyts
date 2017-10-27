@@ -1,5 +1,5 @@
 import { $App, $Boolean, $String, $TextWriter, $Value } from "../s-lib/ivy";
-import { Email, Person, Phone } from "../s-lib/person";
+import { Address, Email, Person, Phone } from "../s-lib/person";
 import { DataPropertyView, ObjectView, Select, StringInput } from "../s-lib/views";
 
 function main() {
@@ -25,26 +25,42 @@ function main() {
 
 function createPerson(): Person {
     const person: Person = $App.create<Person>(Person);
-    person.name.first.value = "William";
-    person.name.middle.value = "Douglas";
-    person.name.last.value = "Roller";
-    person.personalInfo.birthday.value = new Date(1954, 0, 30);
-    person.personalInfo.gender.value = "m";
+    person.basicInfo.name.first.value = "William";
+    person.basicInfo.name.middle.value = "Douglas";
+    person.basicInfo.name.last.value = "Roller";
+    person.basicInfo.personalInfo.birthday.value = new Date(1954, 0, 30);
+    person.basicInfo.personalInfo.gender.value = "m";
     const phone: Phone = $App.create<Phone>(Phone, person);
     phone.number.value = "417-777-0601";
     phone.preferred.value = true;
-    phone.phoneType.value = "m";
-    person.contacts.add(phone);
+    phone.contactType.value = "m";
+    person.contactInfo.add(phone);
     let email = $App.create<Email>(Email, person);
     email.address.value = "w.d.roller@gmail.com";
     email.preferred.value = true;
-    email.emailType.value = "p";
-    person.contacts.add(email);
+    email.contactType.value = "p";
+    person.contactInfo.add(email);
     email = $App.create<Email>(Email, person);
     email.address.value = "doug.roller@essets.com";
     email.preferred.value = false;
-    email.emailType.value = "w";
-    person.contacts.add(email);
+    email.contactType.value = "w";
+    person.contactInfo.add(email);
+    let address = $App.create<Address>(Address, person);
+    address.street1.value = "401 South Avenue APT 302";
+    address.city.value = "Springfield";
+    address.state.value = "MO";
+    address.zip.value = "65806";
+    address.preferred.value = true;
+    address.contactType.value = "pri";
+    person.addresses.add(address);
+    address = $App.create<Address>(Address, person);
+    address.street1.value = "238 Saint Marks Avenue";
+    address.street2.value = "#6B";
+    address.city.value = "Brooklyn";
+    address.state.value = "NY";
+    address.zip.value = "11238";
+    address.contactType.value = "sec";
+    person.addresses.add(address);
     return person;
 }
 

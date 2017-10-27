@@ -118,12 +118,8 @@ export abstract class $Property {
     }
 
     public get readOnly(): boolean {
-        return this._readOnly();
-    }
-
-    protected _readOnly = function(){
         return false;
-    };
+    }
 
     public get views(): ViewCollection {
         if (!this._views) {
@@ -171,6 +167,13 @@ export abstract class $Complex extends $Property {
 
     public abstract get count();
 
+    public toArray(): $Property[] {
+        const ar: $Property[] = [];
+        this.forEach((prop) => {
+            ar.push(prop);
+        });
+        return ar;
+    }
 }
 
 export class $Collection extends $Complex {
@@ -229,9 +232,21 @@ export class $Collection extends $Complex {
         this._count--;
         this.fire({type: "itemRemoved", target: prop});
     }
+
+    public find(key: any): $Property {
+        return this._db[key];
+    }
+
+    public toArray(): $Property[] {
+        const ar: $Property[] = [];
+        this.forEach((prop) => {
+            ar.push(prop);
+        });
+        return ar;
+    }
 }
 
-export class $TypedCollection<T> extends $Collection {
+export class $TypedCollection<T extends $Property> extends $Collection {
 
     public find(key: any): T {
         return this._db[key];

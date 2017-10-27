@@ -4,29 +4,32 @@ import { PersonalName as Name, Phone } from "../s-lib/person";
 
 // const person: Person = $Property.Create<Person>(Person, undefined);
 const person = $App.create<Person>(Person);
-const name: Name = person.name;
-const info: Info = person.personalInfo;
-const contactInfo: Contacts = person.contacts;
+const name: Name = person.basicInfo.name;
+const info: Info = person.basicInfo.personalInfo;
+const contactInfo: Contacts = person.contactInfo;
 
 name.first.value = "William";
 name.middle.value = "Douglas";
 name.last.value = "Roller";
 info.birthday.value = new Date(1954, 0, 30);
+info.gender.value = "m";
 
 let email: Email = $App.create<Email>(Email, person);
 email.address.value = "w.d.roller@gmail.com";
+email.contactType.value = "p";
 email.preferred.value = true;
 contactInfo.add(email);
 
 email = $App.create<Email>(Email, person);
 email.address.value = "doug.roller@essets.com";
+email.contactType.value = "w";
 email.preferred.value = false;
 contactInfo.add(email);
 
 const phone = $App.create<Phone>(Phone, person);
 phone.number.value = "417-777-0601";
 phone.preferred.value = true;
-phone.phoneType.value = "mobile";
+phone.contactType.value = "m";
 contactInfo.add(phone);
 
 let writer: any;
