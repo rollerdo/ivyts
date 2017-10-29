@@ -682,7 +682,7 @@ export abstract class ComplexView extends PropertyGroup {
                 }
                 if (view) {
                     this.properties.appendChild(view);
-                    if (this.level > 3) {
+                    if (this.level > 1) {
                         this.properties.hidden = true;
                     }
                     view.style.paddingLeft = "15px";

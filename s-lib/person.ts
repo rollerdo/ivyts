@@ -87,18 +87,24 @@ export class Phone extends Contact {
     }
 }
 
-const contactInfoClasses = {
+const emailClasses = {
     Email: {
         className: "Email",
         factory: function (owner) { return $App.create<Email>(Email, owner); }
     },
+};
+
+const phoneClasses = {
     Phone: {
         className: "Phone",
         factory: function (owner) { return $App.create<Phone>(Phone, owner); }
     }
 };
 
-export class Contacts extends $TypedCollection<Contact> {
+export class Emails extends $TypedCollection<Email> {
+}
+
+export class Phones extends $TypedCollection<Phone> {
 }
 
 export class Address extends Contact {
@@ -124,7 +130,7 @@ export class Addresses extends $TypedCollection<Address> {
 }
 
 const addressClasses = {
-    Email: {
+    Address: {
         className: "Address",
         factory: function (owner) { return $App.create<Address>(Address, owner); }
     }
@@ -135,14 +141,16 @@ export class Person extends $Persistent {
     constructor(owner?: $Complex) {
         super(owner);
         this.on("created", (event) => {
-            this.contactInfo.factories = contactInfoClasses;
             this.addresses.factories = addressClasses;
+            this.phones.factories = phoneClasses;
+            this.email.factories = emailClasses;
         });
     }
 
     public basicInfo = $App.create<BasicInfo>(BasicInfo, this);
-    public contactInfo = $App.create<Contacts>(Contacts, this);
     public addresses = $App.create<Addresses>(Addresses, this);
+    public phones = $App.create<Phones>(Phones, this);
+    public email = $App.create<Emails>(Emails, this);
 
     get displayValue(): any {
         return this.basicInfo.name.displayValue;

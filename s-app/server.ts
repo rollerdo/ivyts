@@ -5,13 +5,14 @@ const app = express();
 app.use(express.static(__dirname));
 
 import { $App, $Collection, $JSONReader, $JSONWriter,  $Object, $Property, $TextWriter, $Writer} from "../s-lib/ivy";
-import { Contact, Contacts, Email, Person, PersonalInfo as Info} from "../s-lib/person";
+import { Addresses, Email, Emails, Person, PersonalInfo as Info, Phones} from "../s-lib/person";
 import { PersonalName as Name, Phone } from "../s-lib/person";
 
 const person = $App.create<Person>(Person);
 const name: Name = person.basicInfo.name;
 const info: Info = person.basicInfo.personalInfo;
-const contactInfo: Contacts = person.contactInfo;
+const emails: Emails = person.email;
+const phones: Phones = person.phones;
 
 name.first.value = "William";
 name.middle.value = "Douglas";
@@ -21,18 +22,18 @@ info.birthday.value = new Date(1954, 0, 30);
 let email: Email = $App.create<Email>(Email, person);
 email.address.value = "w.d.roller@gmail.com";
 email.preferred.value = true;
-contactInfo.add(email);
+emails.add(email);
 
 email = $App.create<Email>(Email, person);
 email.address.value = "doug.roller@essets.com";
 email.preferred.value = false;
-contactInfo.add(email);
+emails.add(email);
 
 const phone = $App.create<Phone>(Phone, person);
 phone.number.value = "417-777-0601";
 phone.preferred.value = true;
 phone.contactType.value = "mobile";
-contactInfo.add(phone);
+phones.add(phone);
 
 app.get("/hello", function (request, response) {
     response.send("Hello, World");
