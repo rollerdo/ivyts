@@ -60,7 +60,7 @@ export abstract class $Property {
 
     public get caption(): string {
         if (!this._caption) {
-            this._caption = decamelCase(this.constructor.name).trim();
+            this._caption = decamelCase(this.className).trim();
         }
         return this._caption;
     }
@@ -285,7 +285,6 @@ export abstract class $Object extends $Complex {
                 // way...
                 if (_n[0] !== "_") {
                     _v.className = _n;
-                    _v.caption = decamelCase(_n).trim();
                     this._props.push(_v);
                     this._names[_n] = _v;
                 }

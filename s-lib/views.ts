@@ -655,6 +655,32 @@ export abstract class ComplexView extends PropertyGroup {
         super(owner);
     }
 
+    protected createCollectionView(): CollectionView {
+        return $App.create<CollectionView>(CollectionView, this);
+    }
+
+    protected createObjectView(): ObjectView {
+        return $App.create<ObjectView>(ObjectView, this);
+    }
+
+    protected createDataPropertyView(): DataPropertyView {
+        return $App.create<DataPropertyView>(DataPropertyView, this);
+    }
+
+    protected createView(prop: $Property) {
+        let view: View;
+        if (prop.is($ID)) {
+            // Ignore $IDs for now
+        } else if (prop.is($Collection)) {
+            view = this.createCollectionView();
+        } else if (prop.is($Object)) {
+            view = this.createObjectView();
+        } else if (prop.is($Value)) {
+            view = this.createDataPropertyView();
+        }
+        return view;
+    }
+
     public get model(): $Complex {
         return super.model as $Object;
     }
@@ -666,26 +692,18 @@ export abstract class ComplexView extends PropertyGroup {
     public construct() {
         super.construct();
         if (this.model) {
+            this.label.style.width = 110 + "px";
             this.model.forEach((prop: $Property) => {
                 let view: View;
-                if (prop.is($ID)) {
-                    // Ignore $IDs for now
-                } else if (prop.is($Collection)) {
-                    view = $App.create<CollectionView>(CollectionView, this);
-                    view.model = prop as $Collection;
-                } else if (prop.is($Object)) {
-                    view = $App.create<ObjectView>(ObjectView, this);
-                    view.model = prop as $Object;
-                } else if (prop.is($Value)) {
-                    view = $App.create<DataPropertyView>(DataPropertyView, this);
-                    view.model = prop as $Value;
-                }
+                view = this.createView(prop);
                 if (view) {
+                    view.model = prop;
                     this.properties.appendChild(view);
                     if (this.level > 1) {
                         this.properties.hidden = true;
                     }
-                    view.style.paddingLeft = "15px";
+                    view.label.style.width = (110 - (this.level * 10)) + "px";
+                    view.style.paddingLeft = "10px";
                 }
             });
         }

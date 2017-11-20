@@ -26,14 +26,14 @@ export class PersonalInfo extends $Component {
         this.age.on("evaluate", () => {
             this.age.value = age(new Date(Date.now()), this.birthday.value);
         });
-        this.gender.options = { f: "female", m: "male" };
+        this.gender.options = { f: "Female", m: "Male" };
     }
     public birthday = new $Date(this);
     public age = new $Number(this);
     public gender = new $String(this);
 
     get displayValue(): any {
-        return this.gender.options[this.gender.value] + ", age " + this.age.value;
+        return this.gender.options[this.gender.value] + ", Age " + this.age.value;
     }
 }
 
@@ -53,6 +53,7 @@ export class BasicInfo extends $Component {
 export abstract class Contact extends $Persistent {
     constructor(owner?: $Complex) {
         super(owner);
+        this.contactType.caption = "Type";
     }
 
     public preferred = new $Boolean(this);
@@ -62,13 +63,13 @@ export abstract class Contact extends $Persistent {
 export class Email extends Contact {
     constructor(owner?: $Complex) {
         super(owner);
-        this.contactType.options = { p: "personal", w: "work" };
+        this.contactType.options = { p: "Personal", w: "Work" };
     }
 
     public address = new $String(this);
 
     get displayValue(): any {
-        return this.address.value + (this.preferred.value ? " (preferred)" : "") + " (" +
+        return this.address.value + (this.preferred.value ? " (Preferred)" : "") + " (" +
             this.contactType.options[this.contactType.value] + ")";
     }
 }
@@ -76,13 +77,13 @@ export class Email extends Contact {
 export class Phone extends Contact {
     public constructor(owner?: $Complex) {
         super(owner);
-        this.contactType.options = { h: "home", w: "work", m: "mobile", f: "fax" };
+        this.contactType.options = { h: "Home", w: "Work", m: "Mobile", f: "Fax" };
     }
 
     public number = new $String(this);
 
     get displayValue(): any {
-        return this.number.value + ((this.preferred.value ? " (preferred)" : "")) + " (" +
+        return this.number.value + ((this.preferred.value ? " (Preferred)" : "")) + " (" +
             this.contactType.options[this.contactType.value] + ")";
     }
 }
@@ -91,7 +92,7 @@ const emailClasses = {
     Email: {
         className: "Email",
         factory: function (owner) { return $App.create<Email>(Email, owner); }
-    },
+    }
 };
 
 const phoneClasses = {
@@ -111,12 +112,12 @@ export class Address extends Contact {
 
     constructor(owner?: $Complex) {
         super(owner);
-        this.contactType.options = { pri: "primary", sec: "secondary", ses: "seasonal" };
+        this.contactType.options = { pri: "Primary", sec: "Secondary", ses: "Seasonal" };
     }
 
     get displayValue(): any {
         return this.city.value + ", " + this.state.value + "  " + this.zip.value + " " +
-        ((this.preferred.value ? " (preferred)" : "")) + " (" +
+        ((this.preferred.value ? " (Preferred)" : "")) + " (" +
             this.contactType.options[this.contactType.value] + ")";
     }
     public street1 = new $String(this);
