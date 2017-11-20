@@ -4,7 +4,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "taskName": "Typescript compiler",
+            "label": "Typescript compiler",
             "type": "shell",
             "command": "tsc",
             "group": {
@@ -13,22 +13,23 @@
             }
         },
         {
-            "taskName": "Start Server",
+            "label": "Start Server",
             "type": "shell",
-            "command": "node public/s-app/server.js"
+            "command": "node public/s-app/server.js",
+            "problemMatcher": []
         },
         {
-            "taskName": "Typescript Compiler (Watch)",
+            "label": "Typescript Compiler (Watch)",
             "type": "shell",
             "command": "tsc --watch"
         },
         {
-            "taskName": "Webpack",
+            "label": "Webpack",
             "type": "shell",
             "command": "webpack"
         },
         {
-            "taskName": "Webpack (Watch)",
+            "label": "Webpack (Watch)",
             "type": "shell",
             "command": "webpack --watch"
         }

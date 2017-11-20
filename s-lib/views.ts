@@ -655,28 +655,16 @@ export abstract class ComplexView extends PropertyGroup {
         super(owner);
     }
 
-    protected createCollectionView(): CollectionView {
-        return $App.create<CollectionView>(CollectionView, this);
-    }
-
-    protected createObjectView(): ObjectView {
-        return $App.create<ObjectView>(ObjectView, this);
-    }
-
-    protected createDataPropertyView(): DataPropertyView {
-        return $App.create<DataPropertyView>(DataPropertyView, this);
-    }
-
-    protected createView(prop: $Property) {
-        let view: View;
+    protected createView(prop: $Property): ControlView {
+        let view: ControlView;
         if (prop.is($ID)) {
             // Ignore $IDs for now
         } else if (prop.is($Collection)) {
-            view = this.createCollectionView();
+            view = $App.create<CollectionView>(CollectionView, this);
         } else if (prop.is($Object)) {
-            view = this.createObjectView();
+            view = $App.create<ObjectView>(ObjectView, this);
         } else if (prop.is($Value)) {
-            view = this.createDataPropertyView();
+            view = $App.create<DataPropertyView>(DataPropertyView, this);
         }
         return view;
     }
@@ -694,7 +682,7 @@ export abstract class ComplexView extends PropertyGroup {
         if (this.model) {
             this.label.style.width = 110 + "px";
             this.model.forEach((prop: $Property) => {
-                let view: View;
+                let view: ControlView;
                 view = this.createView(prop);
                 if (view) {
                     view.model = prop;
