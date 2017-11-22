@@ -669,6 +669,14 @@ export abstract class ComplexView extends PropertyGroup {
         return view;
     }
 
+    protected formatView(view: ControlView) {
+        if (this.level > 1) {
+            this.properties.hidden = true;
+        }
+        view.label.style.width = (110 - (this.level * 10)) + "px";
+        view.style.paddingLeft = "10px";
+    }
+
     public get model(): $Complex {
         return super.model as $Object;
     }
@@ -687,11 +695,7 @@ export abstract class ComplexView extends PropertyGroup {
                 if (view) {
                     view.model = prop;
                     this.properties.appendChild(view);
-                    if (this.level > 1) {
-                        this.properties.hidden = true;
-                    }
-                    view.label.style.width = (110 - (this.level * 10)) + "px";
-                    view.style.paddingLeft = "10px";
+                    this.formatView(view);
                 }
             });
         }
@@ -703,7 +707,7 @@ export abstract class ComplexView extends PropertyGroup {
             this.model.forEach((prop: $Property) => {
                 prop.refreshViews();
             });
-            this.shouldRefresh = false;
+//            this.shouldRefresh = false;
         }
     }
 

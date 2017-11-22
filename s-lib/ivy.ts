@@ -149,7 +149,7 @@ export abstract class $Property {
         // Get out fast if there are no views
         if (this._views) {
             if (this._views.count) {
-                this._views.forEach(function (v) {
+                this._views.forEach((v) => {
                     v.refresh();
                 });
             }
@@ -184,12 +184,25 @@ export class $Collection extends $Complex {
 
     constructor(owner?: $Complex) {
         super(owner);
+        this.on("itemAdded", (event) => {
+            event.target.on("propertyChanging", (ev) => {
+                this.fire(ev);
+            });
+            event.target.on("propertyChanged", (ev) => {
+                this.fire(ev);
+            });
+        });
+
+        this.on("propertyChanged", () => {
+            this.refreshViews();
+        });
+
     }
 
     public add(prop: $Property): void {
         this._db[prop.key] = prop;
         this._count++;
-        this.fire({type: "itemAdded", target: prop});
+        this.fire({ type: "itemAdded", target: prop });
     }
 
     public contains(key: any): boolean {
@@ -230,7 +243,7 @@ export class $Collection extends $Complex {
         // Todo: We need to determine if delete causes garbage collection issues.
         delete (this._db[prop.key]);
         this._count--;
-        this.fire({type: "itemRemoved", target: prop});
+        this.fire({ type: "itemRemoved", target: prop });
     }
 
     public find(key: any): $Property {
@@ -311,14 +324,14 @@ export abstract class $Object extends $Complex {
         super(owner);
 
         // Must be done after properties from all descendent classes have been added.
-        this.on("created", function (event) {
-            this.initProperties(this);
+        this.on("created", (event) => {
+            this.initProperties();
         });
 
         this.on("propertyChanged", function (event) {
             this.refreshViews();
             if (this.owner) {
-                this.owner.fire({type: "propertyChanged", target: this });
+                this.owner.fire({ type: "propertyChanged", target: this });
             }
         });
     }
@@ -370,7 +383,9 @@ export interface IValue<T> {
 export abstract class $Value extends $Property {
 
     private _val: any;
-    private _calc: boolean = false;
+    private _calculating: boolean = false;
+    private _calculation;
+    private _initialValue;
     private _options = undefined;
 
     protected constructor(owner?: $Complex) {
@@ -385,24 +400,76 @@ export abstract class $Value extends $Property {
 
     public abstract get dataType();
 
-    protected validate(v: any): boolean {
-        let event;
-        this.fire(event = { type: "changing", target: this, proposed: v, message: undefined, accept: true });
-        return event.accept;
-    }
-
     public get value(): any {
+
+        // Calculate if needed and go set to the current value
+        if (!(typeof this._calculation === "undefined") && !(this._calculating)) {
+            // Set the calc flag so we don't recurse on this
+            this._calculating = true;
+            this.value.set(this._calculation());
+            // Clear the calc flag
+            this._calculating = false;
+        } else if (typeof this._val === "undefined" && this._initialValue) {
+            // Do we need to do something with null values before returning? If so, set the value accordingly and return
+            // the new value.
+            // If no, has the nullVal parameter been passed with get()?
+            // Has this.initialValue function been defined?
+            this.value.set(this._initialValue());
+        }
         return this._val;
     }
 
     public set value(v: any) {
+        let equal: boolean;
+        let event;
         const pval = this.convert(v);
-        if ((this._val !== pval) && this.validate(pval)) {
-            this._val = pval;
-            this.fire({ type: "changed", target: this, value: this._val });
-            if (this.owner) {
-                this.owner.fire({type: "propertyChanged", target: this, value: this._val});
+
+        // Dates cannot be directly compared
+        if (pval instanceof (Date)) {
+            if (this._val instanceof (Date)) {
+                equal = (pval.getTime() === this._val.getTime());
+            } else {
+                equal = false;
             }
+        } else {
+            equal = (pval === this._val);
+        }
+
+        if (!equal) {
+
+            // Fire the "changing" events. Any handler that sets _event.cancel to true will cancel the change.
+            // Handlers should never set _event.cancel to false unless the want to override other handlers.
+            if (this.owner) {
+                this.owner.fire(event = {
+                    type: "propertyChanging", target: this, current: this._val,
+                    proposed: pval, cancel: false
+                });
+            }
+            if (!event || !event.cancel) {
+                this.fire(event = {
+                    type: "changing", target: this, current: this._val, proposed: pval,
+                    cancel: false
+                });
+            }
+
+            // Make the change it the event wasn't canceled
+            if (!event.cancel) {
+                const _old = this._val;
+                this._val = event.proposed;
+                // Set the changed flag
+                // todo: At some point, we will want to add a logChange method to create an undo trail
+                // this.changed = true;
+                // Fire the "changed" events to any interested listener
+                this.fire({ type: "changed", target: this, previous: _old, current: this._val });
+                // Notify the owner that we've changed.
+                if (this.owner) {
+                    this.owner.fire({ type: "propertyChanged", target: this, previous: _old, current: this._val });
+                }
+            }
+
+            // Whether we accepted the proposed change or not, we might need to refresh a view that attempted
+            // the change, such as an input element, which would now hold the proposed, but no longer valid, value.
+
             this.refreshViews();
         }
     }

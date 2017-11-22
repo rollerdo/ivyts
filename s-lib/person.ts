@@ -88,6 +88,68 @@ export class Phone extends Contact {
     }
 }
 
+export class Address extends Contact {
+
+    constructor(owner?: $Complex) {
+        super(owner);
+        this.contactType.options = { pri: "Primary", sec: "Secondary", ses: "Seasonal" };
+    }
+
+    get displayValue(): any {
+        return this.city.value + ", " + this.state.value + "  " + this.zip.value + " " +
+            ((this.preferred.value ? " (Preferred)" : "")) + " (" +
+            this.contactType.options[this.contactType.value] + ")";
+    }
+    public street1 = new $String(this);
+    public street2 = new $String(this);
+    public city = new $String(this);
+    public state = new $String(this);
+    public zip = new $String(this);
+}
+
+export class ContactCollection extends $TypedCollection<Contact> {
+    private _display: Contact;
+    public constructor(owner: $Complex) {
+        super(owner);
+        this.on("propertyChanging", (event) => {
+            // If the preferred member is being set, we need to clear the current preferred member
+            if ((event.target.className === "preferred") && event.proposed === true) {
+                this.forEach((mem) => {
+                    if (mem.preferred.value) {
+                        mem.preferred.value = false;
+                        // For now we will assume that multiple members were somehow set to preferred!
+                        // If we want to be safe, we can remove the return statement.
+                        return;
+                    }
+                });
+            }
+        });
+        this.on("propertyChanged", (event) => {
+            if ((event.target.className === "preferred") && event.current === true) {
+                this._display = event.target.owner;
+                this.refreshViews();
+            }
+        });
+    }
+
+    public get displayValue() {
+        if (!this._display && (this.count > 0)) {
+            this._display = this.toArray()[0];
+        }
+        return "Count: " + this.count + (this._display ? " " + this._display.displayValue : "");
+    }
+
+}
+
+export class Emails extends ContactCollection {
+}
+
+export class Phones extends ContactCollection {
+}
+
+export class Addresses extends ContactCollection {
+}
+
 const emailClasses = {
     Email: {
         className: "Email",
@@ -101,34 +163,6 @@ const phoneClasses = {
         factory: function (owner) { return $App.create<Phone>(Phone, owner); }
     }
 };
-
-export class Emails extends $TypedCollection<Email> {
-}
-
-export class Phones extends $TypedCollection<Phone> {
-}
-
-export class Address extends Contact {
-
-    constructor(owner?: $Complex) {
-        super(owner);
-        this.contactType.options = { pri: "Primary", sec: "Secondary", ses: "Seasonal" };
-    }
-
-    get displayValue(): any {
-        return this.city.value + ", " + this.state.value + "  " + this.zip.value + " " +
-        ((this.preferred.value ? " (Preferred)" : "")) + " (" +
-            this.contactType.options[this.contactType.value] + ")";
-    }
-    public street1 = new $String(this);
-    public street2 = new $String(this);
-    public city = new $String(this);
-    public state = new $String(this);
-    public zip = new $String(this);
-}
-
-export class Addresses extends $TypedCollection<Address> {
-}
 
 const addressClasses = {
     Address: {

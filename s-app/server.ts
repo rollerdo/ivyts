@@ -19,17 +19,17 @@ name.middle.value = "Douglas";
 name.last.value = "Roller";
 info.birthday.value = new Date(1954, 0, 30);
 
-let email: Email = $App.create<Email>(Email, person);
+let email: Email = $App.create<Email>(Email, person.email);
 email.address.value = "w.d.roller@gmail.com";
 email.preferred.value = true;
 emails.add(email);
 
-email = $App.create<Email>(Email, person);
+email = $App.create<Email>(Email, person.email);
 email.address.value = "doug.roller@essets.com";
 email.preferred.value = false;
 emails.add(email);
 
-const phone = $App.create<Phone>(Phone, person);
+const phone = $App.create<Phone>(Phone, person.phones);
 phone.number.value = "417-777-0601";
 phone.preferred.value = true;
 phone.contactType.value = "mobile";
