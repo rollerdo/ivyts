@@ -108,35 +108,44 @@ export class Address extends Contact {
 }
 
 export class ContactCollection extends $TypedCollection<Contact> {
-    private _display: Contact;
+    private _preferredContact: Contact;
     public constructor(owner: $Complex) {
         super(owner);
-        this.on("propertyChanging", (event) => {
-            // If the preferred member is being set, we need to clear the current preferred member
-            if ((event.target.className === "preferred") && event.proposed === true) {
-                this.forEach((mem) => {
-                    if (mem.preferred.value) {
-                        mem.preferred.value = false;
-                        // For now we will assume that multiple members were somehow set to preferred!
-                        // If we want to be safe, we can remove the return statement.
-                        return;
-                    }
-                });
+        this.on("itemAdded", (event) => {
+            // Allow only one preferred contact
+            if (event.target.preferred.value) {
+                if (!this._preferredContact) {
+                    this._preferredContact = event.target;
+                } else {
+                    event.target.preferred.value = false;
+                }
             }
         });
         this.on("propertyChanged", (event) => {
-            if ((event.target.className === "preferred") && event.current === true) {
-                this._display = event.target.owner;
-                this.refreshViews();
+            if (event.target.className === "preferred") {
+                if (event.current === true) {
+                    if (this._preferredContact) {
+                        this._preferredContact.preferred.value = false;
+                    }
+                    this._preferredContact = event.target.owner;
+                } else {
+                    if (event.target.owner === this._preferredContact) {
+                        this._preferredContact = undefined;
+                    }
+                }
             }
+            this.refreshViews();
         });
     }
 
-    public get displayValue() {
-        if (!this._display && (this.count > 0)) {
-            this._display = this.toArray()[0];
-        }
-        return "Count: " + this.count + (this._display ? " " + this._display.displayValue : "");
+    public get preferredContact() {
+        return this._preferredContact;
+    }
+
+    public get displayValue(): string {
+        const disp: Contact = this._preferredContact ? this._preferredContact :
+            this.count ? this.toArray()[0] : undefined;
+        return disp ? disp.displayValue : super.displayValue;
     }
 
 }
