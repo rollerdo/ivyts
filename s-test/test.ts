@@ -7,7 +7,7 @@ const person = $App.create<Person>(Person);
 const name: Name = person.basicInfo.name;
 const info: Info = person.basicInfo.personalInfo;
 const phones = person.phones;
-const emails = person.email;
+const emails = person.emails;
 
 name.first.value = "William";
 name.middle.value = "Douglas";

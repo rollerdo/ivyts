@@ -92,7 +92,7 @@ export class Address extends Contact {
 
     constructor(owner?: $Complex) {
         super(owner);
-        this.contactType.options = { pri: "Primary", sec: "Secondary", ses: "Seasonal" };
+        this.contactType.options = { p: "Primary", s: "Secondary" };
     }
 
     get displayValue(): any {
@@ -120,6 +120,7 @@ export class ContactCollection extends $TypedCollection<Contact> {
                     event.target.preferred.value = false;
                 }
             }
+            this.refreshViews();
         });
         this.on("propertyChanged", (event) => {
             if (event.target.className === "preferred") {
@@ -133,8 +134,8 @@ export class ContactCollection extends $TypedCollection<Contact> {
                         this._preferredContact = undefined;
                     }
                 }
+                this.refreshViews();
             }
-            this.refreshViews();
         });
     }
 
@@ -187,14 +188,14 @@ export class Person extends $Persistent {
         this.on("created", (event) => {
             this.addresses.factories = addressClasses;
             this.phones.factories = phoneClasses;
-            this.email.factories = emailClasses;
+            this.emails.factories = emailClasses;
         });
     }
 
     public basicInfo = $App.create<BasicInfo>(BasicInfo, this);
     public addresses = $App.create<Addresses>(Addresses, this);
     public phones = $App.create<Phones>(Phones, this);
-    public email = $App.create<Emails>(Emails, this);
+    public emails = $App.create<Emails>(Emails, this);
 
     get displayValue(): any {
         return this.basicInfo.name.displayValue;
