@@ -51,7 +51,7 @@ function createPerson(): Person {
     address.state.value = "MO";
     address.zip.value = "65806";
     address.preferred.value = true;
-    address.contactType.value = "pri";
+    address.contactType.value = "p";
     person.addresses.add(address);
     address = $App.create<Address>(Address, person.addresses);
     address.street1.value = "238 Saint Marks Avenue";
@@ -59,7 +59,7 @@ function createPerson(): Person {
     address.city.value = "Brooklyn";
     address.state.value = "NY";
     address.zip.value = "11238";
-    address.contactType.value = "sec";
+    address.contactType.value = "s";
     person.addresses.add(address);
     return person;
 }

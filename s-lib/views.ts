@@ -673,8 +673,8 @@ export abstract class ComplexView extends PropertyGroup {
         if (this.level > 1) {
             this.properties.hidden = true;
         }
-        view.label.style.width = (110 - (this.level * 10)) + "px";
-        view.style.paddingLeft = "10px";
+        view.label.style.width = (120 - (this.level * 15)) + "px";
+        view.style.paddingLeft = "15px";
     }
 
     public get model(): $Complex {
@@ -688,7 +688,7 @@ export abstract class ComplexView extends PropertyGroup {
     public construct() {
         super.construct();
         if (this.model) {
-            this.label.style.width = 110 + "px";
+            this.label.style.width = 120 + "px";
             this.model.forEach((prop: $Property) => {
                 let view: ControlView;
                 view = this.createView(prop);
