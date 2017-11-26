@@ -1,6 +1,6 @@
+import { Contact, Email, Emails, Person, PersonalInfo as Info, Phones} from "../s-lib/entity";
+import { PersonalName as Name, Phone } from "../s-lib/entity";
 import { $App, $Collection, $JSONReader, $JSONWriter,  $Object, $Property, $TextWriter, $Writer} from "../s-lib/ivy";
-import { Contact, Email, Emails, Person, PersonalInfo as Info, Phones} from "../s-lib/person";
-import { PersonalName as Name, Phone } from "../s-lib/person";
 
 // const person: Person = $Property.Create<Person>(Person, undefined);
 const person = $App.create<Person>(Person);

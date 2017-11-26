@@ -2,7 +2,11 @@ import { $App, $Boolean, $Collection, $Complex, $Component, $Date, $Number, $Per
 import { $TypedCollection } from "./ivy";
 import { age } from "./utils";
 
-export class PersonalName extends $Component {
+abstract class Name extends $Component {
+
+}
+
+export class PersonalName extends Name {
 
     constructor(owner?: $Complex) {
         super(owner);
@@ -17,7 +21,22 @@ export class PersonalName extends $Component {
     }
 }
 
-export class PersonalInfo extends $Component {
+export class GroupName extends Name {
+    constructor(owner?: $Complex) {
+        super(owner);
+    }
+    public primaryName = new $String(this);
+    public secondaryName = new $String(this);
+    get displayValue(): any {
+        return this.primaryName.value + this.secondaryName.value ? (" " + this.secondaryName.value) : "";
+    }
+}
+
+abstract class Info extends $Component {
+
+}
+
+export class PersonalInfo extends Info {
     constructor(owner?: $Complex) {
         super(owner);
         this.birthday.on("changed", () => {
@@ -37,7 +56,23 @@ export class PersonalInfo extends $Component {
     }
 }
 
+export class GroupInfo extends Info {
+    constructor(owner?: $Complex) {
+        super(owner);
+        this.groupType.options = { team: "Team", company: "Company", vendor: "Vendor" };
+    }
+    public groupType = new $String(this);
+
+    get displayValue(): any {
+        return this.groupType.options[this.groupType.value];
+    }
+}
+
 export class BasicInfo extends $Component {
+
+}
+
+export class PersonBasicInfo extends BasicInfo {
 
     constructor(owner?) {
         super(owner);
@@ -48,6 +83,19 @@ export class BasicInfo extends $Component {
     }
     public name = $App.create<PersonalName>(PersonalName, this);
     public personalInfo = $App.create<PersonalInfo>(PersonalInfo, this);
+}
+
+export class GroupBasicInfo extends BasicInfo {
+    constructor(owner?) {
+        super(owner);
+    }
+
+    get displayValue(): any {
+        return this.name.displayValue + ", " + this.groupInfo.displayValue;
+    }
+
+    public name = $App.create<GroupName>(GroupName, this);
+    public groupInfo = $App.create<GroupInfo>(GroupInfo, this);
 }
 
 export abstract class Contact extends $Persistent {
@@ -181,21 +229,68 @@ const addressClasses = {
     }
 };
 
-export class Person extends $Persistent {
-
+export abstract class Entity extends $Persistent {
+    protected abstract createBasicInfo(): void;
+    protected abstract createCollections(): void;
     constructor(owner?: $Complex) {
         super(owner);
+        this.createBasicInfo();
+        this.createCollections();
         this.on("created", (event) => {
             this.addresses.factories = addressClasses;
             this.phones.factories = phoneClasses;
             this.emails.factories = emailClasses;
         });
     }
+    public basicInfo: BasicInfo;
+    public addresses: Addresses;
+    public phones: Phones;
+    public emails: Emails;
 
-    public basicInfo = $App.create<BasicInfo>(BasicInfo, this);
-    public addresses = $App.create<Addresses>(Addresses, this);
-    public phones = $App.create<Phones>(Phones, this);
-    public emails = $App.create<Emails>(Emails, this);
+}
+
+export class Person extends Entity {
+
+    constructor(owner?: $Complex) {
+        super(owner);
+    }
+
+    // Redeclare as subtype
+    public basicInfo: PersonBasicInfo;
+
+    protected createBasicInfo(): void {
+        this.basicInfo = $App.create<PersonBasicInfo>(PersonBasicInfo, this);
+    }
+
+    protected createCollections(): void {
+        this.addresses = $App.create<Addresses>(Addresses, this);
+        this.phones = $App.create<Phones>(Phones, this);
+        this.emails = $App.create<Emails>(Emails, this);
+    }
+
+    get displayValue(): any {
+        return this.basicInfo.name.displayValue;
+    }
+}
+
+export class Group extends Entity {
+
+    constructor(owner?: $Complex) {
+        super(owner);
+    }
+
+    // Redeclare as subtype
+    public basicInfo: GroupBasicInfo;
+
+    protected createBasicInfo(): void {
+        this.basicInfo = $App.create<GroupBasicInfo>(GroupBasicInfo, this);
+    }
+
+    protected createCollections(): void {
+        this.addresses = $App.create<Addresses>(Addresses, this);
+        this.phones = $App.create<Phones>(Phones, this);
+        this.emails = $App.create<Emails>(Emails, this);
+    }
 
     get displayValue(): any {
         return this.basicInfo.name.displayValue;

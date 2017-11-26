@@ -4,9 +4,9 @@ const app = express();
 
 app.use(express.static(__dirname));
 
+import { Addresses, Email, Emails, Person, PersonalInfo as Info, Phones} from "../s-lib/entity";
+import { PersonalName as Name, Phone } from "../s-lib/entity";
 import { $App, $Collection, $JSONReader, $JSONWriter,  $Object, $Property, $TextWriter, $Writer} from "../s-lib/ivy";
-import { Addresses, Email, Emails, Person, PersonalInfo as Info, Phones} from "../s-lib/person";
-import { PersonalName as Name, Phone } from "../s-lib/person";
 
 const person = $App.create<Person>(Person);
 const name: Name = person.basicInfo.name;

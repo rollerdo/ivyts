@@ -1,5 +1,5 @@
+import { Address, Email, Person, Phone } from "../s-lib/entity";
 import { $App, $Boolean, $String, $TextWriter, $Value } from "../s-lib/ivy";
-import { Address, Email, Person, Phone } from "../s-lib/person";
 import { DataPropertyView, ObjectView, Select, StringInput } from "../s-lib/views";
 
 function main() {
