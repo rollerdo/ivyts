@@ -171,13 +171,17 @@ export class ContactCollection extends $TypedCollection<Contact> {
             this.refreshViews();
         });
         this.on("propertyChanged", (event) => {
+            // Did the preferred property change?
             if (event.target.className === "preferred") {
+                // If it's changed to true, set the old last preferred contact value (_preferredContact) to false
                 if (event.current === true) {
                     if (this._preferredContact) {
                         this._preferredContact.preferred.value = false;
                     }
+                    // Set the _preferredContact to the new Object
                     this._preferredContact = event.target.owner;
                 } else {
+                    // If the current _preferredContact is now false, we have no preferred contact
                     if (event.target.owner === this._preferredContact) {
                         this._preferredContact = undefined;
                     }
@@ -187,6 +191,7 @@ export class ContactCollection extends $TypedCollection<Contact> {
         });
     }
 
+    // Expolse _preferred contact as readOnly just in case someone needs it...
     public get preferredContact() {
         return this._preferredContact;
     }
@@ -230,8 +235,15 @@ const addressClasses = {
 };
 
 export abstract class Entity extends $Persistent {
+
     protected abstract createBasicInfo(): void;
-    protected abstract createCollections(): void;
+
+    protected createCollections(): void {
+        this.addresses = $App.create<Addresses>(Addresses, this);
+        this.phones = $App.create<Phones>(Phones, this);
+        this.emails = $App.create<Emails>(Emails, this);
+    }
+
     constructor(owner?: $Complex) {
         super(owner);
         this.createBasicInfo();
@@ -262,12 +274,6 @@ export class Person extends Entity {
         this.basicInfo = $App.create<PersonBasicInfo>(PersonBasicInfo, this);
     }
 
-    protected createCollections(): void {
-        this.addresses = $App.create<Addresses>(Addresses, this);
-        this.phones = $App.create<Phones>(Phones, this);
-        this.emails = $App.create<Emails>(Emails, this);
-    }
-
     get displayValue(): any {
         return this.basicInfo.name.displayValue;
     }
@@ -284,12 +290,6 @@ export class Group extends Entity {
 
     protected createBasicInfo(): void {
         this.basicInfo = $App.create<GroupBasicInfo>(GroupBasicInfo, this);
-    }
-
-    protected createCollections(): void {
-        this.addresses = $App.create<Addresses>(Addresses, this);
-        this.phones = $App.create<Phones>(Phones, this);
-        this.emails = $App.create<Emails>(Emails, this);
     }
 
     get displayValue(): any {
