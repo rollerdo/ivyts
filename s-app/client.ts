@@ -1,21 +1,9 @@
-import { Address, Email, Person, Phone } from "../s-lib/entity";
+import { Address, Email, Group, Person, Phone } from "../s-lib/entity";
 import { $App, $Boolean, $String, $TextWriter, $Value } from "../s-lib/ivy";
 import { DataPropertyView, ObjectView, Select, StringInput } from "../s-lib/views";
 
 function main() {
     const frame = document.getElementById("frame");
-/*
-    const myBool = new $Boolean(undefined);
-    myBool.value = true;
-    const myView = $App.create<DataPropertyView>(DataPropertyView, undefined);
-    myBool.views.add(myView);
-    myView.insert(frame);
-    const myString = new $String(undefined);
-    myString.value = "testing";
-    const myStrView = $App.create<DataPropertyView>(DataPropertyView, undefined);
-    myString.views.add(myStrView);
-    myStrView.insert(frame);
-*/
     const person = createPerson();
     const objView = $App.create<ObjectView>(ObjectView);
     person.views.add(objView);
@@ -25,6 +13,8 @@ function main() {
 
 function createPerson(): Person {
     const person: Person = $App.create<Person>(Person);
+    const group: Group = $App.create<Group>(Group);
+    group.basicInfo.name.primaryName.value = "Maintenance";
     person.basicInfo.name.first.value = "William";
     person.basicInfo.name.middle.value = "Douglas";
     person.basicInfo.name.last.value = "Roller";

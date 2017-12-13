@@ -234,6 +234,13 @@ const addressClasses = {
     }
 };
 
+const memberClasses = {
+    Member: {
+        className: "Members",
+        factory: function (owner) { return $App.create<Address>(Address, owner); }
+    }
+};
+
 export abstract class Entity extends $Persistent {
 
     protected abstract createBasicInfo(): void;
