@@ -374,8 +374,8 @@ export abstract class $App extends $Persistent {
 export type performFunc = (mem, i) => void;
 
 export interface IAction {
-    display: string;
     perform: performFunc;
+    display: string;
 }
 
 export interface IOption<T> {
