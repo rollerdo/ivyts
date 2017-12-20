@@ -99,13 +99,18 @@ export abstract class $Property {
     }
 
     public get root(): $Complex {
-        let _root: $Complex = this.owner;
+        let _root: $Property;
+        if (this.is($Complex)) {
+            _root = this;
+        } else {
+            _root = this.owner;
+        }
         while (_root) {
             if (_root.owner) {
-                _root = this.owner;
+                _root = _root.owner;
             }
         }
-        return _root;
+        return _root as $Complex;
     }
 
     public fromJSON(json: string) {

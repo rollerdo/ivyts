@@ -445,14 +445,21 @@ export abstract class View extends HtElement {
     constructor(owner?: $Complex) {
         super(owner);
         this.on("created", () => {
-            if (this.owner) {
-                const cv: ComplexView = this.owner as ComplexView;
-                this._level = cv.level + 1;
-            } else {
-                this._level = 1;
-            }
+            this.initializeView();
         });
     }
+
+    protected initializeView() {
+
+        if (this.owner) {
+            const cv: ComplexView = this.owner as ComplexView;
+            this._level = cv.level + 1;
+        } else {
+            this._level = 1;
+        }
+        this.classList.add("level-" + this.level);
+    }
+
     protected createElement() {
         return document.createElement("div");
     }
@@ -521,10 +528,12 @@ export abstract class ControlView extends View {
         // Create a label for this view
         this.label = this.createLabel();
         this.label.classList.add("label");
+        this.label.classList.add("level-" + this.level);
 
         // And an input control
         this.control = this.createControl();
         this.control.classList.add("control");
+        this.control.classList.add("level-" + this.level);
     }
 
     protected abstract createLabel(): ValueElement;
@@ -639,6 +648,7 @@ export class PropertyGroup extends ControlView {
         const _inst = $App.create<Div>(Div, this);
         _inst.className = "properties";
         _inst.classList.add("properties");
+        _inst.classList.add("level-" + this.level);
         this.appendChild(_inst);
         return _inst;
     }
@@ -655,15 +665,9 @@ export abstract class ComplexView extends PropertyGroup {
         super(owner);
     }
 
-    protected createCollectionView (): CollectionView {
-        return $App.create<CollectionView>(CollectionView, this);
-    }
-
-    protected createObjectView (): ObjectView {
-        return $App.create<ObjectView>(ObjectView, this);
-    }
-
-    protected createDataPropertyView (): DataPropertyView {
+    protected abstract createCollectionView(): ComplexView ;
+    protected abstract createObjectView(): ComplexView ;
+    protected createDataPropertyView(): DataPropertyView {
         return $App.create<DataPropertyView>(DataPropertyView, this);
     }
 
@@ -681,14 +685,6 @@ export abstract class ComplexView extends PropertyGroup {
         return view;
     }
 
-    protected formatView(view: ControlView) {
-        if (this.level > 1) {
-            this.properties.hidden = true;
-        }
-        view.label.style.width = (120 - (this.level * 15)) + "px";
-        view.style.paddingLeft = "15px";
-    }
-
     public get model(): $Complex {
         return super.model as $Object;
     }
@@ -700,14 +696,12 @@ export abstract class ComplexView extends PropertyGroup {
     public construct() {
         super.construct();
         if (this.model) {
-            this.label.style.width = 120 + "px";
             this.model.forEach((prop: $Property) => {
                 let view: ControlView;
                 view = this.createView(prop);
                 if (view) {
                     view.model = prop;
                     this.properties.appendChild(view);
-                    this.formatView(view);
                 }
             });
         }
@@ -719,13 +713,35 @@ export abstract class ComplexView extends PropertyGroup {
             this.model.forEach((prop: $Property) => {
                 prop.refreshViews();
             });
-//            this.shouldRefresh = false;
+            //            this.shouldRefresh = false;
         }
     }
 
 }
 
-export class ObjectView extends ComplexView {
+export class AccordionView extends ComplexView {
+
+    public constructor(owner?: $Complex) {
+        super(owner);
+    }
+
+    protected createCollectionView(): AccordionCollectionView {
+        return $App.create<AccordionCollectionView>(AccordionCollectionView, this);
+    }
+
+    protected createObjectView(): AccordionObjectView {
+        return $App.create<AccordionObjectView>(AccordionObjectView, this);
+    }
+
+    public construct() {
+        super.construct();
+        if (this.level > 1) {
+            this.properties.hidden = true;
+        }
+    }
+}
+
+export class AccordionObjectView extends AccordionView {
     public constructor(owner?: $Complex) {
         super(owner);
         this.classList.add("object");
@@ -741,7 +757,7 @@ export class ObjectView extends ComplexView {
 
 }
 
-export class CollectionView extends ComplexView {
+export class AccordionCollectionView extends AccordionView {
     public constructor(owner?: $Complex) {
         super(owner);
         this.classList.add("collection");

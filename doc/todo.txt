@@ -1,0 +1,3 @@
+1. Add ability to know that a child property has changed from any level of parent
+2. Figure out what to do with icons
+3. Add actions and action objects and corresponding views

@@ -1,11 +1,11 @@
 import { Address, Email, Group, Person, Phone } from "../s-lib/entity";
 import { $App, $Boolean, $String, $TextWriter, $Value } from "../s-lib/ivy";
-import { DataPropertyView, ObjectView, Select, StringInput } from "../s-lib/views";
+import { AccordionObjectView, Select, StringInput } from "../s-lib/views";
 
 function main() {
     const frame = document.getElementById("frame");
     const person = createPerson();
-    const objView = $App.create<ObjectView>(ObjectView);
+    const objView = $App.create<AccordionObjectView>(AccordionObjectView);
     person.views.add(objView);
     objView.insert(frame);
     objView.refresh();

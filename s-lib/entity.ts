@@ -104,6 +104,12 @@ export abstract class Contact extends $Persistent {
         this.contactType.caption = "Type";
     }
 
+    protected _ico = "";
+
+    protected pref() {
+        return " <i class='fg-green " + (this.preferred.value ? "fas " : "far ")  +  this._ico + " fa-sm'></i> ";
+    }
+
     public preferred = new $Boolean(this);
     public contactType = new $String(this);
 }
@@ -114,11 +120,13 @@ export class Email extends Contact {
         this.contactType.options = { p: "Personal", w: "Work" };
     }
 
+    protected _ico = "fa-envelope";
+
     public address = new $String(this);
 
     get displayValue(): any {
-        return this.address.value + (this.preferred.value ? " (Preferred)" : "") + " (" +
-            this.contactType.options[this.contactType.value] + ")";
+        return this.pref() + this.address.value +
+            " (" + this.contactType.options[this.contactType.value] + ")";
     }
 }
 
@@ -128,10 +136,12 @@ export class Phone extends Contact {
         this.contactType.options = { h: "Home", w: "Work", m: "Mobile", f: "Fax" };
     }
 
+    protected _ico = "fa-phone";
+
     public number = new $String(this);
 
     get displayValue(): any {
-        return this.number.value + ((this.preferred.value ? " (Preferred)" : "")) + " (" +
+        return this.pref() + this.number.value + " (" +
             this.contactType.options[this.contactType.value] + ")";
     }
 }
@@ -143,9 +153,10 @@ export class Address extends Contact {
         this.contactType.options = { p: "Primary", s: "Secondary" };
     }
 
+    protected _ico = "fa-map-marker";
+
     get displayValue(): any {
-        return this.city.value + ", " + this.state.value + "  " + this.zip.value + " " +
-            ((this.preferred.value ? " (Preferred)" : "")) + " (" +
+        return this.pref() + this.city.value + ", " + this.state.value + "  " + this.zip.value + " " + " (" +
             this.contactType.options[this.contactType.value] + ")";
     }
     public street1 = new $String(this);
