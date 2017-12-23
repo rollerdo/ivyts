@@ -1,5 +1,5 @@
 import { $App, $Boolean, $Collection, $Complex, $Component, $Date, $Number, $Persistent, $String } from "./ivy";
-import { $TypedCollection } from "./ivy";
+import { $Section, $TypedCollection } from "./ivy";
 import { age } from "./utils";
 
 abstract class Name extends $Component {
@@ -68,7 +68,7 @@ export class GroupInfo extends Info {
     }
 }
 
-export class BasicInfo extends $Component {
+export class BasicInfo extends $Section {
 
 }
 
@@ -104,10 +104,8 @@ export abstract class Contact extends $Persistent {
         this.contactType.caption = "Type";
     }
 
-    protected _ico = "";
-
     protected pref() {
-        return " <i class='fg-green " + (this.preferred.value ? "fas " : "far ")  +  this._ico + " fa-sm'></i> ";
+        return " <i class='fg-green " + (this.preferred.value ? "fas " : "far ")  +  this.icon + " fa-fw fa-sm'></i> ";
     }
 
     public preferred = new $Boolean(this);
@@ -120,7 +118,9 @@ export class Email extends Contact {
         this.contactType.options = { p: "Personal", w: "Work" };
     }
 
-    protected _ico = "fa-envelope";
+    public get icon(): string {
+        return "fa-envelope";
+    }
 
     public address = new $String(this);
 
@@ -136,7 +136,9 @@ export class Phone extends Contact {
         this.contactType.options = { h: "Home", w: "Work", m: "Mobile", f: "Fax" };
     }
 
-    protected _ico = "fa-phone";
+    public get icon(): string {
+        return "fa-phone";
+    }
 
     public number = new $String(this);
 
@@ -153,7 +155,9 @@ export class Address extends Contact {
         this.contactType.options = { p: "Primary", s: "Secondary" };
     }
 
-    protected _ico = "fa-map-marker";
+    public get icon(): string {
+        return "fa-map-marker";
+    }
 
     get displayValue(): any {
         return this.pref() + this.city.value + ", " + this.state.value + "  " + this.zip.value + " " + " (" +

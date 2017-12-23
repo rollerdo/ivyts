@@ -86,6 +86,10 @@ export abstract class $Property {
         return this.className;
     }
 
+    public get icon() {
+        return undefined;
+    }
+
     public is(cls: any): boolean {
         return this instanceof cls;
     }
@@ -344,12 +348,7 @@ export abstract class $Object extends $Complex {
     }
 }
 
-export abstract class $Component extends $Object {
-    protected constructor(owner?: $Complex) {
-        super(owner);
-    }
-}
-
+// A stand-along document with its own unique ID
 export abstract class $Persistent extends $Object {
     protected constructor(owner?: $Complex) {
         super(owner);
@@ -362,6 +361,34 @@ export abstract class $Persistent extends $Object {
     }
 
     public ID = new $ID(this);
+
+    public get documentClass () {
+        return "Persistent";
+    }
+}
+
+// A larger group of logically related fields contained in a document. May be optional or mandatory
+export abstract class $Section extends $Object {
+    protected constructor(owner?: $Complex) {
+        super(owner);
+    }
+
+    public get documentClass () {
+        return "Section";
+    }
+
+    // By default a section is mandatory
+    public get mandatory() {
+        return true;
+    }
+}
+
+// A small group of logically related mandatory fields (e.g. personal name) in a $Peristent object
+export abstract class $Component extends $Object {
+
+    public get documentClass () {
+        return "Component";
+    }
 }
 
 export abstract class $App extends $Persistent {

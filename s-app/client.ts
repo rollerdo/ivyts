@@ -8,7 +8,6 @@ function main() {
     const objView = $App.create<AccordionObjectView>(AccordionObjectView);
     person.views.add(objView);
     objView.insert(frame);
-    objView.refresh();
 }
 
 function createPerson(): Person {
