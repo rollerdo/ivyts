@@ -7,8 +7,6 @@ abstract class IDFactory {
     public abstract createID(): string;
 }
 
-let _app: $App;
-
 // Creates a globally-unique ID. Slowest but should be unique among all objects in the known universe.
 class GUIDFactory extends IDFactory {
     public createID(): string {
@@ -391,18 +389,6 @@ export abstract class $Component extends $Object {
     }
 }
 
-export abstract class $App extends $Persistent {
-    public static create<T extends $Property>(c: { new(owner?: $Property): T }, owner?: $Property): T {
-        const obj: T = new c(owner);
-        obj.fire("created");
-        return obj;
-    }
-    protected constructor(owner?: $Complex) {
-        super(owner);
-        _app = this;
-    }
-}
-
 export type performFunc = (mem, i) => void;
 
 export interface IAction {
@@ -781,3 +767,17 @@ export class $JSONReader {
         }
     }
 }
+
+export class $App extends $Persistent {
+    public static create<T extends $Property>(c: { new(owner?: $Property): T }, owner?: $Property): T {
+        const obj: T = new c(owner);
+        obj.fire("created");
+        return obj;
+    }
+
+    public constructor(owner?: $Complex) {
+        super(owner);
+    }
+}
+
+export const app = new $App();
