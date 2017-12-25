@@ -5,14 +5,14 @@
                 "type": "node",
                 "request": "launch",
                 "name": "Typescript Nodejs Test",
-                "program": "${workspaceRoot}/public/test/test.js"
+                "program": "${workspaceRoot}/dist/test/test.js"
             },
             {
                 "type": "chrome",
                 "request": "launch",
                 "name": "eSSETS Client",
                 "sourceMaps": true,
-                "url": "http://localhost:8080/index.html",
+                "url": "http://localhost:8080",
                 "webRoot": "${workspaceRoot}"
             },
             {
@@ -20,7 +20,7 @@
                 "request": "launch",
                 "name": "eSSETS Server",
                 "sourceMaps": true,
-                "program": "${workspaceRoot}/public/app/server.js",
+                "program": "${workspaceRoot}/dist/app/server.js",
                 "outFiles": [
                     "${workspaceRoot}/out/**/*.js"
                 ]

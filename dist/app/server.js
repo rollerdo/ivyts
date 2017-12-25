@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const app = express();
-app.use(express.static(__dirname + "/static"));
+app.use(express.static(__dirname));
+app.use(express.static(__dirname + "/public"));
+const dirName = __dirname;
 const entity_1 = require("../lib/entity");
 const entity_2 = require("../lib/entity");
 const ivy_1 = require("../lib/ivy");
@@ -38,7 +40,7 @@ app.get("/person", function (request, response) {
     response.send(person.toJSON());
 });
 app.get("/", function (req, res) {
-    res.sendFile("index.html");
+    res.sendFile(dirName + "/private/index.html");
 });
 console.log("Server listening on port 8080");
 app.listen(8080);

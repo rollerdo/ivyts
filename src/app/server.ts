@@ -1,9 +1,12 @@
 import express = require("express");
+import fs = require("fs");
 
 const app = express();
 
-app.use(express.static( __dirname + "/static"));
+app.use(express.static( __dirname));
+app.use(express.static( __dirname + "/public"));
 
+const dirName: string = __dirname;
 import { Addresses, Email, Emails, Person, PersonalInfo as Info, Phones} from "../lib/entity";
 import { PersonalName as Name, Phone } from "../lib/entity";
 import { $App, $Collection, $JSONReader, $JSONWriter,  $Object, $Property, $TextWriter, $Writer} from "../lib/ivy";
@@ -47,7 +50,7 @@ app.get("/person", function (request, response) {
 });
 
 app.get("/", function(req, res){
-    res.sendFile("index.html");
+    res.sendFile(dirName + "/private/index.html");
 });
 
 console.log("Server listening on port 8080");
