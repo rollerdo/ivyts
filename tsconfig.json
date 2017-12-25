@@ -1,18 +1,21 @@
 {
     "compilerOptions": {
-        "target": "es2015",
+        "target": "es6",
         "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": false,     // We need to type all code so we can set this to true
         "sourceMap": true,
-        "outDir": "./public",
+        "outDir": "./dist",
+        "baseUrl": ".",
         "experimentalDecorators": true
     },
+/*
     "exclude": [
         "node_modules"
-      ],    
+      ],
+*/
     "include": [
-        "./source/lib",
-        "./source/app/*",
-        "./source/test/*"
+        "./src/**/*"
     ],
     "compileOnSave": true
 }

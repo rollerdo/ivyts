@@ -2,7 +2,7 @@ import express = require("express");
 
 const app = express();
 
-app.use(express.static("/Users/Doug/Dropbox/Code/ivyts/public/app"));
+app.use(express.static( __dirname + "/static"));
 
 import { Addresses, Email, Emails, Person, PersonalInfo as Info, Phones} from "../lib/entity";
 import { PersonalName as Name, Phone } from "../lib/entity";
@@ -46,8 +46,8 @@ app.get("/person", function (request, response) {
     response.send(person.toJSON());
 });
 
-app.get("/view", function(req, res){
-    res.sendFile("/data.json");
+app.get("/", function(req, res){
+    res.sendFile("index.html");
 });
 
 console.log("Server listening on port 8080");
