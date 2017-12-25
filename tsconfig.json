@@ -10,9 +10,9 @@
         "node_modules"
       ],    
     "include": [
-        "./s-lib",
-        "./s-app/*",
-        "./s-test/*"
+        "./source/lib",
+        "./source/app/*",
+        "./source/test/*"
     ],
     "compileOnSave": true
 }

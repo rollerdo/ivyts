@@ -1,6 +1,6 @@
-import { Address, Email, Group, Person, Phone } from "../s-lib/entity";
-import { $App, $Boolean, $String, $TextWriter, $Value } from "../s-lib/ivy";
-import { AccordionObjectView, Select, StringInput } from "../s-lib/views";
+import { Address, Email, Group, Person, Phone } from "../lib/entity";
+import { $App, $Boolean, $String, $TextWriter, $Value } from "../lib/ivy";
+import { AccordionObjectView, Select, StringInput } from "../lib/views";
 
 function main() {
     const frame = document.getElementById("frame");

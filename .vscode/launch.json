@@ -5,7 +5,7 @@
                 "type": "node",
                 "request": "launch",
                 "name": "Typescript Nodejs Test",
-                "program": "${workspaceRoot}/public/s-test/test.js"
+                "program": "${workspaceRoot}/public/test/test.js"
             },
             {
                 "type": "chrome",
@@ -20,7 +20,7 @@
                 "request": "launch",
                 "name": "eSSETS Server",
                 "sourceMaps": true,
-                "program": "${workspaceRoot}/public/s-app/server.js",
+                "program": "${workspaceRoot}/public/app/server.js",
                 "outFiles": [
                     "${workspaceRoot}/out/**/*.js"
                 ]
