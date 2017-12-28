@@ -1,7 +1,6 @@
 node_modules
-dist/app/client.js
-dist/app/client.js.map
-dist/app/server.js
-dist/app/server.js.map
+dist/app/client.*
+dist/app/server.*
+dist/app/public/bundle.*
 dist/lib/
 dist/test/

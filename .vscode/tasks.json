@@ -13,6 +13,15 @@
             }
         },
         {
+            "label": "Typescript compiler (watch)",
+            "type": "shell",
+            "command": "tsc -w",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
             "label": "Start Server",
             "type": "shell",
             "command": "node dist/app/server.js",

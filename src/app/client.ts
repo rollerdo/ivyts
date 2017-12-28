@@ -26,7 +26,7 @@ function createPerson(): Person {
     const person: Person = $App.create<Person>(Person);
     const group: Group = $App.create<Group>(Group);
     group.basicInfo.name.primaryName.value = "Maintenance";
-    person.basicInfo.name.first.value = "William";
+    person.basicInfo.name.first.value = "Williams";
     person.basicInfo.name.middle.value = "Douglas";
     person.basicInfo.name.last.value = "Roller";
     person.basicInfo.personalInfo.birthday.value = new Date(1954, 0, 30);
