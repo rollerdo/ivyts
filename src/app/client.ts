@@ -1,4 +1,4 @@
-import { Address, Email, Group, Person, Phone } from "../lib/entity";
+import { Address, Email, Group, Person, Persons, Phone } from "../lib/entity";
 import { $App, $Boolean, $String, $TextWriter, $Value } from "../lib/ivy";
 import { AccordionObjectView, Select, StringInput } from "../lib/views";
 
@@ -6,8 +6,20 @@ function main() {
     const frame = document.getElementById("frame");
     const person = createPerson();
     const objView = $App.create<AccordionObjectView>(AccordionObjectView);
+    const persons: Persons = $App.create<Persons>(Persons);
     person.views.add(objView);
     objView.insert(frame);
+}
+
+function loadDoc() {
+    const xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+            document.getElementById("demo").innerHTML = this.responseText;
+        }
+    };
+    xhttp.open("GET", "ajax_info.txt", true);
+    xhttp.send();
 }
 
 function createPerson(): Person {

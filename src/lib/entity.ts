@@ -301,6 +301,9 @@ export class Person extends Entity {
     }
 }
 
+export class Persons extends $TypedCollection<Person> {
+}
+
 export class Group extends Entity {
 
     constructor(owner?: $Complex) {

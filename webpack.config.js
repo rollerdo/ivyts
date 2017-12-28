@@ -1,7 +1,7 @@
 module.exports = {
     entry: "./src/app/client.ts",
     output: {
-        filename: "./dist/app/bundle.js"
+        filename: "./dist/app/public/bundle.js"
     },
     resolve: {
         // Add '.ts' and '.tsx' as a resolvable extension.
