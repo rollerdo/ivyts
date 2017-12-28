@@ -1,4 +1,3 @@
 node_modules
-public/app
-public/lib
-public/test
+dist/
+*.js
