@@ -1,2 +1,7 @@
 node_modules
-dist/**
+dist/app/client.js
+dist/app/client.js.map
+dist/app/server.js
+dist/app/server.js.map
+dist/lib/
+dist/test/

@@ -15,7 +15,7 @@ const ginfo: GroupInfo = group.basicInfo.groupInfo;
 const gphones = group.phones;
 const gemails = group.emails;
 
-name.first.value = "William";
+name.first.value = "Williams";
 name.middle.value = "Douglas";
 name.last.value = "Roller";
 info.birthday.value = new Date(1954, 0, 30);
