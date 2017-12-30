@@ -4,3 +4,4 @@ dist/app/server.*
 dist/app/public/bundle.*
 dist/lib/
 dist/test/
+.DS_Store
