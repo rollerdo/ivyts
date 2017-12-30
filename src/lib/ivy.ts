@@ -268,7 +268,12 @@ export class $Collection extends $Complex {
     }
 }
 
-export class $TypedCollection<T extends View> extends $Collection {
+interface IView {
+    construct();
+    refresh();
+}
+
+export class $TypedCollection<T extends $Property> extends $Collection {
 
     public find(key: any): T {
         return this._db[key];

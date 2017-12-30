@@ -1,6 +1,6 @@
-import { Address, Email, Group, Person, Persons, Phone } from "../lib/entity";
+import { Address, Contact, Email, Person, Persons, Phone } from "../lib/entity";
 import { $App, $Boolean, $String, $TextWriter, $Value } from "../lib/ivy";
-import { AccordionObjectView, Select, StringInput } from "../lib/views";
+import { AccordionObjectView, Select, StringInput} from "../lib/views";
 
 function main() {
     loadDoc();
