@@ -1,2 +1,0 @@
-# ivyts
-Ivy Typescript
