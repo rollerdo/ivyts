@@ -256,6 +256,13 @@ const memberClasses = {
     }
 };
 
+const personClasses = {
+    Person: {
+        className: "Persons",
+        factory: function (owner) { return $App.create<Person>(Person, owner); }
+    }
+};
+
 export abstract class Entity extends $Persistent {
 
     protected abstract createBasicInfo(): void;
@@ -302,6 +309,10 @@ export class Person extends Entity {
 }
 
 export class Persons extends $TypedCollection<Person> {
+    constructor(owner?: $Complex) {
+        super(owner);
+        this.factories = personClasses;
+    }
 }
 
 export class Group extends Entity {

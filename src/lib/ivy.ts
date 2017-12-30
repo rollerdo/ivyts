@@ -739,6 +739,13 @@ export class $JSONReader {
         for (n1 in parentSource) {
             childSource = parentSource[n1];
             childInst = parentInst[n1];
+            // The if statement below only happens when the root object is a collection
+            // Unlike an object, a collection doesn't construct empty objects that will be
+            // filled upon reading. Instead it must construct each child object.
+            if (!childInst) {
+                childInst = parentInst;
+                childSource = parentSource;
+            }
             if (childInst.is($Value)) {
                 // Simply assign the childSource value to the childInst, and we're finished
                 (childInst as $Value).value = childSource;
