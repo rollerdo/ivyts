@@ -502,10 +502,6 @@ export abstract class View extends HtElement {
         }
     }
 
-    public getContext() {
-        return "view";
-    }
-
     // this.refresh() updates the data displayed by the view and its associated HtElements. It responds to changes
     // in the data held by the existing model.
     public refresh() {

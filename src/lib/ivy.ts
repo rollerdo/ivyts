@@ -1,5 +1,5 @@
 import { decamelCase, enableEvents } from "./utils";
-import { View } from "./Views";
+import { View } from "./views";
 
 export type forEachFunc = (mem, i) => void;
 
@@ -154,7 +154,7 @@ export abstract class $Property {
     }
 
     // Iterates through all of the current views and refreshes them.
-    public refreshViews() {
+    public refreshViews(): void {
         // Get out fast if there are no views
         if (this._views) {
             if (this._views.count) {
@@ -268,7 +268,7 @@ export class $Collection extends $Complex {
     }
 }
 
-export class $TypedCollection<T extends $Property> extends $Collection {
+export class $TypedCollection<T extends View> extends $Collection {
 
     public find(key: any): T {
         return this._db[key];
