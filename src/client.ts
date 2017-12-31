@@ -2,6 +2,7 @@ import { Address, Contact, Email, Person, Persons, Phone } from "./essets/entity
 import { $Boolean, $ivy, $String, $TextWriter, $Value } from "./lib/ivy";
 import { AccordionObjectView, Select, StringInput} from "./lib/views";
 
+// Called from last line below
 function main() {
     loadDoc();
 }

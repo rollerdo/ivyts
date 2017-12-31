@@ -1,7 +1,7 @@
 node_modules
-dist
-dist/app/server.*
-dist/app/public/bundle.*
-dist/lib/
-dist/test/
+dist/lib
+dist/essets
+dist/client.*
+dist/bundle.*
+dist/test.*
 .DS_Store
