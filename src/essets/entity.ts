@@ -1,6 +1,6 @@
-import { $App, $Boolean, $Collection, $Complex, $Component, $Date, $Number, $Persistent, $String } from "./ivy";
-import { $Section, $TypedCollection } from "./ivy";
-import { age } from "./utils";
+import { $App, $Boolean, $Collection, $Complex, $Component, $Date, $Number, $Persistent, $String } from "../lib/ivy";
+import { $Section, $TypedCollection } from "../lib/ivy";
+import { age } from "../lib/utils";
 
 abstract class Name extends $Component {
 

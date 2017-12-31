@@ -1,11 +1,11 @@
-import { Address, Contact, Email, Person, Persons, Phone } from "../lib/entity";
-import { $App, $Boolean, $String, $TextWriter, $Value } from "../lib/ivy";
-import { AccordionObjectView, Select, StringInput} from "../lib/views";
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const entity_1 = require("./essets/entity");
+const ivy_1 = require("./lib/ivy");
+const views_1 = require("./lib/views");
 function main() {
     loadDoc();
 }
-
 function loadDoc() {
     const xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
@@ -16,15 +16,14 @@ function loadDoc() {
     xhttp.open("GET", "http://localhost:8080/persons", true);
     xhttp.send();
 }
-
-function createPerson(json: string): void {
+function createPerson(json) {
     const frame = document.getElementById("frame");
-    const objView = $App.create<AccordionObjectView>(AccordionObjectView);
-    const persons: Persons = $App.create<Persons>(Persons);
+    const objView = ivy_1.$App.create(views_1.AccordionObjectView);
+    const persons = ivy_1.$App.create(entity_1.Persons);
     persons.fromJSON(json);
-    const person: Person = persons.toArray()[1];
+    const person = persons.toArray()[1];
     person.views.add(objView);
     objView.insert(frame);
 }
-
 main();
+//# sourceMappingURL=client.js.map
