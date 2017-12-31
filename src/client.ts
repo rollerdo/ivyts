@@ -1,5 +1,5 @@
 import { Address, Contact, Email, Person, Persons, Phone } from "./essets/entity";
-import { $App, $Boolean, $String, $TextWriter, $Value } from "./lib/ivy";
+import { $Boolean, $ivy, $String, $TextWriter, $Value } from "./lib/ivy";
 import { AccordionObjectView, Select, StringInput} from "./lib/views";
 
 function main() {
@@ -19,8 +19,8 @@ function loadDoc() {
 
 function createPerson(json: string): void {
     const frame = document.getElementById("frame");
-    const objView = $App.create<AccordionObjectView>(AccordionObjectView);
-    const persons: Persons = $App.create<Persons>(Persons);
+    const objView = $ivy<AccordionObjectView>(AccordionObjectView);
+    const persons: Persons = $ivy<Persons>(Persons);
     persons.fromJSON(json);
     const person: Person = persons.toArray()[1];
     person.views.add(objView);

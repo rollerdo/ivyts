@@ -1,6 +1,12 @@
 import { decamelCase, enableEvents } from "./utils";
 import { View } from "./views";
 
+export function $ivy<T extends $Property>(c: { new(owner?: $Property): T }, owner?: $Property): T {
+    const obj: T = new c(owner);
+    obj.fire("created");
+    return obj;
+}
+
 export type forEachFunc = (mem, i) => void;
 
 abstract class IDFactory {
@@ -139,7 +145,7 @@ export abstract class $Property {
 
     // Override createViewCollection to add a more sophisticated collection object.
     protected createViewCollection(): ViewCollection {
-        const _coll = $App.create<ViewCollection>(ViewCollection, this);
+        const _coll = $ivy<ViewCollection>(ViewCollection, this);
 
         // When we add the view, we need to set the view's model property
         _coll.on("itemAdded", (event) => {
@@ -365,7 +371,7 @@ export abstract class $Persistent extends $Object {
 
     public ID = new $ID(this);
 
-    public get documentClass () {
+    public get documentClass() {
         return "Persistent";
     }
 }
@@ -376,7 +382,7 @@ export abstract class $Section extends $Object {
         super(owner);
     }
 
-    public get documentClass () {
+    public get documentClass() {
         return "Section";
     }
 
@@ -389,7 +395,7 @@ export abstract class $Section extends $Object {
 // A small group of logically related mandatory fields (e.g. personal name) in a $Peristent object
 export abstract class $Component extends $Object {
 
-    public get documentClass () {
+    public get documentClass() {
         return "Component";
     }
 }
@@ -773,23 +779,11 @@ export class $JSONReader {
                         this.readProperties(memberInst, memberSource[n2]);
                     }
                 });
-            } else {
-                throw Error("Invalid Object " + childSource);
             }
         }
     }
 }
 
-export class $App extends $Persistent {
-    public static create<T extends $Property>(c: { new(owner?: $Property): T }, owner?: $Property): T {
-        const obj: T = new c(owner);
-        obj.fire("created");
-        return obj;
-    }
+export class $App extends $Persistent  {
 
-    public constructor(owner?: $Complex) {
-        super(owner);
-    }
 }
-
-export const app = new $App();

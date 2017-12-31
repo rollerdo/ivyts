@@ -1,5 +1,5 @@
 node_modules
-dist/app/client.*
+dist
 dist/app/server.*
 dist/app/public/bundle.*
 dist/lib/

@@ -1,5 +1,5 @@
-import { $App, $Boolean, $Collection, $Complex, $Component, $Date, $Number, $Persistent, $String } from "../lib/ivy";
-import { $Section, $TypedCollection } from "../lib/ivy";
+import { $Boolean, $Collection, $Complex, $Component, $Date, $Number, $Persistent, $String } from "../lib/ivy";
+import { $ivy, $Section, $TypedCollection } from "../lib/ivy";
 import { age } from "../lib/utils";
 
 abstract class Name extends $Component {
@@ -81,8 +81,8 @@ export class PersonBasicInfo extends BasicInfo {
     get displayValue(): any {
         return this.name.displayValue + ", " + this.personalInfo.displayValue;
     }
-    public name = $App.create<PersonalName>(PersonalName, this);
-    public personalInfo = $App.create<PersonalInfo>(PersonalInfo, this);
+    public name = $ivy<PersonalName>(PersonalName, this);
+    public personalInfo = $ivy<PersonalInfo>(PersonalInfo, this);
 }
 
 export class GroupBasicInfo extends BasicInfo {
@@ -94,8 +94,8 @@ export class GroupBasicInfo extends BasicInfo {
         return this.name.displayValue + ", " + this.groupInfo.displayValue;
     }
 
-    public name = $App.create<GroupName>(GroupName, this);
-    public groupInfo = $App.create<GroupInfo>(GroupInfo, this);
+    public name = $ivy<GroupName>(GroupName, this);
+    public groupInfo = $ivy<GroupInfo>(GroupInfo, this);
 }
 
 export abstract class Contact extends $Persistent {
@@ -231,35 +231,35 @@ export class Addresses extends ContactCollection {
 const emailClasses = {
     Email: {
         className: "Email",
-        factory: function (owner) { return $App.create<Email>(Email, owner); }
+        factory: function (owner) { return $ivy<Email>(Email, owner); }
     }
 };
 
 const phoneClasses = {
     Phone: {
         className: "Phone",
-        factory: function (owner) { return $App.create<Phone>(Phone, owner); }
+        factory: function (owner) { return $ivy<Phone>(Phone, owner); }
     }
 };
 
 const addressClasses = {
     Address: {
         className: "Address",
-        factory: function (owner) { return $App.create<Address>(Address, owner); }
+        factory: function (owner) { return $ivy<Address>(Address, owner); }
     }
 };
 
 const memberClasses = {
     Member: {
         className: "Members",
-        factory: function (owner) { return $App.create<Address>(Address, owner); }
+        factory: function (owner) { return $ivy<Address>(Address, owner); }
     }
 };
 
 const personClasses = {
     Person: {
         className: "Persons",
-        factory: function (owner) { return $App.create<Person>(Person, owner); }
+        factory: function (owner) { return $ivy<Person>(Person, owner); }
     }
 };
 
@@ -268,9 +268,9 @@ export abstract class Entity extends $Persistent {
     protected abstract createBasicInfo(): void;
 
     protected createCollections(): void {
-        this.addresses = $App.create<Addresses>(Addresses, this);
-        this.phones = $App.create<Phones>(Phones, this);
-        this.emails = $App.create<Emails>(Emails, this);
+        this.addresses = $ivy<Addresses>(Addresses, this);
+        this.phones = $ivy<Phones>(Phones, this);
+        this.emails = $ivy<Emails>(Emails, this);
     }
 
     constructor(owner?: $Complex) {
@@ -300,7 +300,7 @@ export class Person extends Entity {
     public basicInfo: PersonBasicInfo;
 
     protected createBasicInfo(): void {
-        this.basicInfo = $App.create<PersonBasicInfo>(PersonBasicInfo, this);
+        this.basicInfo = $ivy<PersonBasicInfo>(PersonBasicInfo, this);
     }
 
     get displayValue(): any {
@@ -325,7 +325,7 @@ export class Group extends Entity {
     public basicInfo: GroupBasicInfo;
 
     protected createBasicInfo(): void {
-        this.basicInfo = $App.create<GroupBasicInfo>(GroupBasicInfo, this);
+        this.basicInfo = $ivy<GroupBasicInfo>(GroupBasicInfo, this);
     }
 
     get displayValue(): any {

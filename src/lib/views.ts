@@ -1,4 +1,4 @@
-import { $Any, $App, $Boolean, $Collection, $Complex, $Date, $ID } from "./ivy";
+import { $Any, $Boolean, $Collection, $Complex, $Date, $ID, $ivy } from "./ivy";
 import { $Object, $Property, $String, $Value } from "./ivy";
 import { foreachProp, toDateFromInputString, toInputStringfromDate } from "./utils";
 
@@ -557,15 +557,15 @@ export class DataPropertyView extends ControlView {
     }
 
     private typeTable = {
-        boolean: function (owner) { return $App.create<CheckboxInput>(CheckboxInput, owner); },
-        date: function (owner) { return $App.create<DateInput>(DateInput, owner); },
-        number: function (owner) { return $App.create<NumberInput>(NumberInput, owner); },
-        string: function (owner) { return $App.create<StringInput>(StringInput, owner); },
+        boolean: function (owner) { return $ivy<CheckboxInput>(CheckboxInput, owner); },
+        date: function (owner) { return $ivy<DateInput>(DateInput, owner); },
+        number: function (owner) { return $ivy<NumberInput>(NumberInput, owner); },
+        string: function (owner) { return $ivy<StringInput>(StringInput, owner); },
     };
 
     // Override in subclasses to created the desired label field
     protected createLabel() {
-        const _inst = $App.create<DivLabel>(DivLabel, this);
+        const _inst = $ivy<DivLabel>(DivLabel, this);
         _inst.className = "label";
         this.appendChild(_inst);
         return _inst;
@@ -576,10 +576,10 @@ export class DataPropertyView extends ControlView {
         let _inst;
         const _model = this.model;
         if (_model.readOnly) {
-            _inst = $App.create<DivLabel>(DivLabel, this);
+            _inst = $ivy<DivLabel>(DivLabel, this);
             _inst.classList.add("readOnly");
         } else if (_model.options) {
-            _inst = $App.create<Select>(Select, this);
+            _inst = $ivy<Select>(Select, this);
             _inst.initializeOptions(_model.options);
             _inst.classList.add("select");
         } else {
@@ -617,7 +617,7 @@ export class PropertyGroup extends ControlView {
     public properties: Div;
 
     protected createLabel() {
-        const _inst = $App.create<DivLabel>(DivLabel, this);
+        const _inst = $ivy<DivLabel>(DivLabel, this);
         _inst.className = "label";
         _inst.classList.add("label");
         this.appendChild(_inst);
@@ -629,7 +629,7 @@ export class PropertyGroup extends ControlView {
     }
 
     protected createControl() {
-        const _inst = $App.create<DivLabel>(DivLabel, this);
+        const _inst = $ivy<DivLabel>(DivLabel, this);
         _inst.className = "control";
         _inst.classList.add("control");
         this.appendChild(_inst);
@@ -641,7 +641,7 @@ export class PropertyGroup extends ControlView {
     }
 
     protected createPropertyGroup(): Div {
-        const _inst = $App.create<Div>(Div, this);
+        const _inst = $ivy<Div>(Div, this);
         _inst.className = "properties";
         _inst.classList.add("properties");
         _inst.classList.add("level-" + this.level);
@@ -664,7 +664,7 @@ export abstract class ComplexView extends PropertyGroup {
     protected abstract createCollectionView(): ComplexView ;
     protected abstract createObjectView(): ComplexView ;
     protected createDataPropertyView(): DataPropertyView {
-        return $App.create<DataPropertyView>(DataPropertyView, this);
+        return $ivy<DataPropertyView>(DataPropertyView, this);
     }
 
     protected createView(prop: $Property): ControlView {
@@ -722,11 +722,11 @@ export class AccordionView extends ComplexView {
     }
 
     protected createCollectionView(): AccordionCollectionView {
-        return $App.create<AccordionCollectionView>(AccordionCollectionView, this);
+        return $ivy<AccordionCollectionView>(AccordionCollectionView, this);
     }
 
     protected createObjectView(): AccordionObjectView {
-        return $App.create<AccordionObjectView>(AccordionObjectView, this);
+        return $ivy<AccordionObjectView>(AccordionObjectView, this);
     }
 
     public construct() {
