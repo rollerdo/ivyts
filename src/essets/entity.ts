@@ -263,6 +263,13 @@ const personClasses = {
     }
 };
 
+const groupClasses = {
+    Person: {
+        className: "Persons",
+        factory: function (owner) { return $ivy<Person>(Person, owner); }
+    }
+};
+
 export abstract class Entity extends $Persistent {
 
     protected abstract createBasicInfo(): void;
@@ -330,5 +337,12 @@ export class Group extends Entity {
 
     get displayValue(): any {
         return this.basicInfo.name.displayValue;
+    }
+}
+
+export class Groups extends $TypedCollection<Group> {
+    constructor(owner?: $Complex) {
+        super(owner);
+        this.factories = groupClasses;
     }
 }

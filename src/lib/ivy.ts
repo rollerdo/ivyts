@@ -785,5 +785,7 @@ export class $JSONReader {
 }
 
 export class $App extends $Persistent  {
-
+    public constructor(owner: $Complex) {
+        super(owner);
+    }
 }
