@@ -2,6 +2,7 @@ node_modules
 dist/lib
 dist/essets
 dist/client.*
+dist/server.*
 dist/bundle.*
 dist/test.*
 .DS_Store
