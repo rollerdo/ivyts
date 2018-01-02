@@ -1,59 +1,22 @@
+import fs = require("fs");
+import { EssetsApp } from "./essets/app";
 import { Contact, Email, Emails, Group, GroupInfo, GroupName, Person, PersonalInfo as Info} from "./essets/entity";
-import { PersonalName as Name, Phone } from "./essets/entity";
+import { PersonalName as Name, Persons, Phone } from "./essets/entity";
 import { $Collection, $ivy, $JSONReader, $JSONWriter,  $Object, $Property, $TextWriter, $Writer} from "./lib/ivy";
 
-// const person: Person = $Property.Create<Person>(Person, undefined);
-const person = $ivy<Person>(Person);
-const name: Name = person.basicInfo.name;
-const info: Info = person.basicInfo.personalInfo;
-const phones = person.phones;
-const emails = person.emails;
+const essets = $ivy<EssetsApp>(EssetsApp);
 
-const group = $ivy<Group>(Group);
-const gname: GroupName = group.basicInfo.name;
-const ginfo: GroupInfo = group.basicInfo.groupInfo;
-const gphones = group.phones;
-const gemails = group.emails;
+let json = fs.readFileSync(__dirname + "/private/appdata.json", "utf8");
 
-name.first.value = "William";
-name.middle.value = "Douglas";
-name.last.value = "Roller";
-info.birthday.value = new Date(1954, 0, 30);
-info.gender.value = "m";
-gname.primaryName.value = "eSSETS";
-ginfo.groupType.value = "team";
-
-let email: Email = $ivy<Email>(Email, person);
-email.address.value = "w.d.roller@gmail.com";
-email.contactType.value = "p";
-email.preferred.value = true;
-emails.add(email);
-gemails.add(email);
-
-email = $ivy<Email>(Email, person);
-email.address.value = "doug.roller@essets.com";
-email.contactType.value = "w";
-email.preferred.value = false;
-emails.add(email);
-gemails.add(email);
-
-const phone = $ivy<Phone>(Phone, person);
-phone.number.value = "417-777-0601";
-phone.preferred.value = true;
-phone.contactType.value = "m";
-phones.add(phone);
-gphones.add(phone);
-
-console.log("\nGroup JSON:\n" + group.toJSON());
-
+essets.fromJSON(json);
 let writer: any;
 writer = new $TextWriter();
-const result = writer.write(person, 0);
+const result = writer.write(essets, 0);
 console.log("\nHuman-readable:\n" + result);
 
-const json = person.toJSON();
+json = essets.toJSON();
 console.log("Original JSON:\n" + json);
 
-const newPerson = $ivy<Person>(Person);
-newPerson.fromJSON(json);
+const newEssets = $ivy<EssetsApp>(EssetsApp);
+newEssets.fromJSON(json);
 console.log("\nRe-loaded JSON:\n" + json);

@@ -529,13 +529,12 @@ export class $String extends $Value implements IValue<string> {
     }
 
     public convert(v: any): string {
-        return v.toString();
+        return (v === null || v === undefined) ? "" : v.toString();
     }
 
     public get dataType() {
         return "string";
     }
-
 }
 
 export class $ID extends $String {
@@ -727,7 +726,10 @@ export class $JSONWriter extends $Writer<string> {
     }
 
     protected writeValue(prop: $Value) {
-        if ((prop.is($String) || prop.is($Date))) {
+        const val = prop.value;
+        if ((typeof(val) === "undefined") || (val === null)) {
+            this._result += null;
+        } else if ((prop.is($String) || prop.is($Date))) {
             this._result += '"' + (prop.value) + '"';
         } else {
             this._result += prop.value;
@@ -759,7 +761,7 @@ export class $JSONReader {
             }
             if (childInst.is($Value)) {
                 // Simply assign the childSource value to the childInst, and we're finished
-                (childInst as $Value).value = childSource;
+                (childInst as $Value).value = childSource === null ? undefined : childSource ;
             } else if (childInst.is($Object)) {
                 // Recursively read the child object's properties
                 this.readProperties(childInst, childSource);

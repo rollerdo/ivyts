@@ -1,3 +1,7 @@
 1. Add ability to know that a child property has changed from any level of parent
 2. Figure out what to do with icons
 3. Add actions and action objects and corresponding views
+
+Notes:
+1. All $Value properties have either a valid defined value or are set to undefined. When writing to JSON, undefined
+    values are stored as null but when rehydrated, all nulls are converted to undefined in their respective objects.

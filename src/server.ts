@@ -12,8 +12,8 @@ app.get("/hello", function (req, res) {
     res.send("Hello, World");
 });
 
-app.get("/persons", function (req, res) {
-    res.sendFile(dirName + "/private/persons.json");
+app.get("/appdata", function (req, res) {
+    res.sendFile(dirName + "/private/appdata.json");
 });
 
 app.get("/", function (req, res) {

@@ -25,10 +25,10 @@ export class GroupName extends Name {
     constructor(owner?: $Complex) {
         super(owner);
     }
-    public primaryName = new $String(this);
-    public secondaryName = new $String(this);
+    public primary = new $String(this);
+    public secondary = new $String(this);
     get displayValue(): any {
-        return this.primaryName.value + this.secondaryName.value ? (" " + this.secondaryName.value) : "";
+        return this.primary.value + (this.secondary.value ? (" " + this.secondary.value) : "");
     }
 }
 
@@ -59,7 +59,7 @@ export class PersonalInfo extends Info {
 export class GroupInfo extends Info {
     constructor(owner?: $Complex) {
         super(owner);
-        this.groupType.options = { team: "Team", company: "Company", vendor: "Vendor" };
+        this.groupType.options = { team: "Team", division: "Division", company: "Company", vendor: "Vendor" };
     }
     public groupType = new $String(this);
 
@@ -108,8 +108,14 @@ export abstract class Contact extends $Persistent {
         return " <i class='fg-green " + (this.preferred.value ? "fas " : "far ")  +  this.icon + " fa-fw fa-sm'></i> ";
     }
 
+    protected desc() {
+        return " (" + (this.description.value ?
+            this.description.value : (this.contactType.options[this.contactType.value])) + ")";
+    }
+
     public preferred = new $Boolean(this);
     public contactType = new $String(this);
+    public description = new $String(this);
 }
 
 export class Email extends Contact {
@@ -125,8 +131,7 @@ export class Email extends Contact {
     public address = new $String(this);
 
     get displayValue(): any {
-        return this.pref() + this.address.value +
-            " (" + this.contactType.options[this.contactType.value] + ")";
+        return this.address.value + this.desc();
     }
 }
 
@@ -143,8 +148,8 @@ export class Phone extends Contact {
     public number = new $String(this);
 
     get displayValue(): any {
-        return this.pref() + this.number.value + " (" +
-            this.contactType.options[this.contactType.value] + ")";
+        return this.number.value + " (" +
+            (this.description.value ? this.description.value : this.contactType.options[this.contactType.value]) + ")";
     }
 }
 
@@ -160,7 +165,7 @@ export class Address extends Contact {
     }
 
     get displayValue(): any {
-        return this.pref() + this.city.value + ", " + this.state.value + "  " + this.zip.value + " " + " (" +
+        return this.city.value + ", " + this.state.value + "  " + this.zip.value + " " + " (" +
             this.contactType.options[this.contactType.value] + ")";
     }
     public street1 = new $String(this);
@@ -264,9 +269,9 @@ const personClasses = {
 };
 
 const groupClasses = {
-    Person: {
-        className: "Persons",
-        factory: function (owner) { return $ivy<Person>(Person, owner); }
+    Group: {
+        className: "Groups",
+        factory: function (owner) { return $ivy<Group>(Group, owner); }
     }
 };
 
