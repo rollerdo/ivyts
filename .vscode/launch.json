@@ -4,7 +4,7 @@
             {
                 "type": "node",
                 "request": "launch",
-                "name": "Typescript Nodejs Test",
+                "name": "Ivy-ts Console Test",
                 "program": "${workspaceRoot}/dist/test.js"
             },
             {

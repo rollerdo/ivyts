@@ -2,9 +2,10 @@ import fs = require("fs");
 import { EssetsApp } from "./essets/app";
 import { Contact, Email, Emails, Group, GroupInfo, GroupName, Person, PersonalInfo as Info} from "./essets/entity";
 import { PersonalName as Name, Persons, Phone } from "./essets/entity";
-import { $Collection, $ivy, $JSONReader, $JSONWriter,  $Object, $Property, $TextWriter, $Writer} from "./lib/ivy";
+import { $app, $Collection, $ivy, $JSONReader, $JSONWriter,  $Object, $Property, $TextWriter, $Writer} from "./lib/ivy";
 
 const essets = $ivy<EssetsApp>(EssetsApp);
+$app();
 
 let json = fs.readFileSync(__dirname + "/private/appdata.json", "utf8");
 
@@ -15,6 +16,9 @@ const result = writer.write(essets, 0);
 console.log("\nHuman-readable:\n" + result);
 
 json = essets.toJSON();
+essets.persons.toArray()[0].clearChanged();
+essets.persons.toArray()[0].basicInfo.name.first.value = "George";
+essets.persons.toArray()[1].clearChanged();
 console.log("Original JSON:\n" + json);
 
 const newEssets = $ivy<EssetsApp>(EssetsApp);

@@ -6,230 +6,315 @@
     <link rel="stylesheet" type="text/css" href="./styles.css">
     <script src="https://use.fontawesome.com/949761f2bc.js"></script>
     <script src="app.js"></script>
-    <!--    <script src="./ivy/ivyCacheclientpersist.js"></script> -->
 </head>
 
 <body>
-    <div class="main">
-        <div class="banner">
-            <div class="logo">
+    <div class="app">
+        <div class="root">
+            <div class="root-logo">
                 <div>eSSETS</div>
             </div>
-            <div id="menu" class="menu">
-                <div class="menu-item selected">
+            <div id="root-menu" class="root-menu">
+                <div class="root-menu-item selected">
                     <div>ToDoQ</div>
                 </div>
-                <div class="menu-item">
+                <div class="root-menu-item">
                     <div>Places</div>
                 </div>
-                <div class="menu-item">
+                <div class="root-menu-item">
                     <div>Things</div>
                 </div>
-                <div class="menu-item">
+                <div class="root-menu-item">
                     <div>People</div>
                 </div>
-                <div class="menu-item">
+                <div class="root-menu-item">
                     <div>Groups</div>
                 </div>
-                <div class="menu-item">
+                <div class="root-menu-item">
                     <div>Reports</div>
                 </div>
             </div>
-            <div class="settings">
-                <div class="settings-item">
+            <div class="root-settings">
+                <div class="root-settings-item">
                     <div>?</div>
                 </div>
-                <div class="settings-item ico">
+                <div class="root-settings-item ico">
                     <i class="fa fa-gear"></i>
                 </div>
             </div>
         </div>
         <div class="tools">
         </div>
-        <div class="ivy-body">
+        <div class="main-body">
             <div id="left-panel" class="left-panel">
-                <div class="lp-banner">
-                    <div class="lp-banner-scrollable">
-                        <div class="list-heading">Action</div>
-                        <div class="list-heading">ID</div>
-                        <div class="list-heading">Description</div>
-                        <div class="list-heading">Location</div>
-                    </div>
-                </div>
-                <div class="scrollable">
-                    <div class="list">
-                        <div class="list-row">
-                            <div class="list-cell measure"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico toggleButton"></i></div>
-                            <div class="list-cell measure">WO29144</div>
-                            <div class="list-cell measure">Replace furnace filter</div>
-                            <div class="list-cell measure">Roof:Main Building:West Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO29141</div>
-                            <div class="list-cell">Replace broken window</div>
-                            <div class="list-cell">Main Building:North Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO29138</div>
-                            <div class="list-cell">Assemble new desk</div>
-                            <div class="list-cell">Warehouse</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO29137</div>
-                            <div class="list-cell">Take a nap</div>
-                            <div class="list-cell">Main Building:West Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO29135</div>
-                            <div class="list-cell">Install new office sign</div>
-                            <div class="list-cell">Main Building:North Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO29132</div>
-                            <div class="list-cell">Take a vacation</div>
-                            <div class="list-cell">Main Building:West Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO29129</div>
-                            <div class="list-cell">Repair the chicken coop</div>
-                            <div class="list-cell">Warehouse</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO29128</div>
-                            <div class="list-cell">Avoid work at all cost</div>
-                            <div class="list-cell">Main Building:North Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO29126</div>
-                            <div class="list-cell">Change out brake pads</div>
-                            <div class="list-cell">Main Building:West Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO29125</div>
-                            <div class="list-cell">Change into a vampire</div>
-                            <div class="list-cell">Main Building:West Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO29122</div>
-                            <div class="list-cell">Retire for good</div>
-                            <div class="list-cell">Main Building:North Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO29121</div>
-                            <div class="list-cell">Go back to work</div>
-                            <div class="list-cell">Main Building:West Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO29120</div>
-                            <div class="list-cell">Go Christmas shopping</div>
-                            <div class="list-cell">Warehouse</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28144</div>
-                            <div class="list-cell">Replace furnace</div>
-                            <div class="list-cell">Main Building:West Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28141</div>
-                            <div class="list-cell">Fix cracked wall</div>
-                            <div class="list-cell">Main Building:North Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28138</div>
-                            <div class="list-cell">Assemble new lamp</div>
-                            <div class="list-cell">Main Building:West Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28137</div>
-                            <div class="list-cell">Take a pill</div>
-                            <div class="list-cell">Main Building:North Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28135</div>
-                            <div class="list-cell">Install new office party game in the main office kitchen</div>
-                            <div class="list-cell">Main Building:North Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28132</div>
-                            <div class="list-cell">Take a journey west</div>
-                            <div class="list-cell">Warehouse</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28129</div>
-                            <div class="list-cell">Repair the chicken soup</div>
-                            <div class="list-cell">Warehouse</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28128</div>
-                            <div class="list-cell">Avoid work at all cafes</div>
-                            <div class="list-cell">Main Building:North Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28126</div>
-                            <div class="list-cell">Wear out brake pads</div>
-                            <div class="list-cell">Main Building:West Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28125</div>
-                            <div class="list-cell">Change the world</div>
-                            <div class="list-cell">Main Building:North Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO29123</div>
-                            <div class="list-cell">Clean guttering</div>
-                            <div class="list-cell">Main Building:West Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28123</div>
-                            <div class="list-cell">Get mind out of gutter</div>
-                            <div class="list-cell">Main Building:West Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28122</div>
-                            <div class="list-cell">Retire for goodness sake</div>
-                            <div class="list-cell">Main Building:North Campus</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28121</div>
-                            <div class="list-cell">Get back to the basics</div>
-                            <div class="list-cell">Warehouse</div>
-                        </div>
-                        <div class="list-row">
-                            <div class="list-cell"><input type="checkbox" class="list-cb" /><i class="fa fa-search-plus list-ico"></i></div>
-                            <div class="list-cell">WO28120</div>
-                            <div class="list-cell">Go Christmas caroling</div>
-                            <div class="list-cell">Main Building:West Campus</div>
+                <div class="list">
+                    <div class="list-banner">
+                        <div class="lp-banner-scrollable">
+                            <div class="list-heading">Action</div>
+                            <div class="list-heading">ID</div>
+                            <div class="list-heading">Description</div>
+                            <div class="list-heading">Location</div>
                         </div>
                     </div>
-                </div>
-                <div class="lp-footer">
-                    <input type="button" value="Current Workorder" class="action assignee toggleButton" />
+                    <div class="scrollable">
+                        <div class="list-body">
+                            <div class="list-row">
+                                <div class="list-cell measure">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico toggleButton"></i>
+                                </div>
+                                <div class="list-cell measure">WO29144</div>
+                                <div class="list-cell measure">Replace furnace filter</div>
+                                <div class="list-cell measure">Roof:Main Building:West Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO29141</div>
+                                <div class="list-cell">Replace broken window</div>
+                                <div class="list-cell">Main Building:North Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO29138</div>
+                                <div class="list-cell">Assemble new desk</div>
+                                <div class="list-cell">Warehouse</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO29137</div>
+                                <div class="list-cell">Take a nap</div>
+                                <div class="list-cell">Main Building:West Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO29135</div>
+                                <div class="list-cell">Install new office sign</div>
+                                <div class="list-cell">Main Building:North Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO29132</div>
+                                <div class="list-cell">Take a vacation</div>
+                                <div class="list-cell">Main Building:West Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO29129</div>
+                                <div class="list-cell">Repair the chicken coop</div>
+                                <div class="list-cell">Warehouse</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO29128</div>
+                                <div class="list-cell">Avoid work at all cost</div>
+                                <div class="list-cell">Main Building:North Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO29126</div>
+                                <div class="list-cell">Change out brake pads</div>
+                                <div class="list-cell">Main Building:West Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO29125</div>
+                                <div class="list-cell">Change into a vampire</div>
+                                <div class="list-cell">Main Building:West Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO29122</div>
+                                <div class="list-cell">Retire for good</div>
+                                <div class="list-cell">Main Building:North Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO29121</div>
+                                <div class="list-cell">Go back to work</div>
+                                <div class="list-cell">Main Building:West Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO29120</div>
+                                <div class="list-cell">Go Christmas shopping</div>
+                                <div class="list-cell">Warehouse</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28144</div>
+                                <div class="list-cell">Replace furnace</div>
+                                <div class="list-cell">Main Building:West Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28141</div>
+                                <div class="list-cell">Fix cracked wall</div>
+                                <div class="list-cell">Main Building:North Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28138</div>
+                                <div class="list-cell">Assemble new lamp</div>
+                                <div class="list-cell">Main Building:West Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28137</div>
+                                <div class="list-cell">Take a pill</div>
+                                <div class="list-cell">Main Building:North Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28135</div>
+                                <div class="list-cell">Install new office party game in the main office kitchen</div>
+                                <div class="list-cell">Main Building:North Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28132</div>
+                                <div class="list-cell">Take a journey west</div>
+                                <div class="list-cell">Warehouse</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28129</div>
+                                <div class="list-cell">Repair the chicken soup</div>
+                                <div class="list-cell">Warehouse</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28128</div>
+                                <div class="list-cell">Avoid work at all cafes</div>
+                                <div class="list-cell">Main Building:North Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28126</div>
+                                <div class="list-cell">Wear out brake pads</div>
+                                <div class="list-cell">Main Building:West Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28125</div>
+                                <div class="list-cell">Change the world</div>
+                                <div class="list-cell">Main Building:North Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO29123</div>
+                                <div class="list-cell">Clean guttering</div>
+                                <div class="list-cell">Main Building:West Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28123</div>
+                                <div class="list-cell">Get mind out of gutter</div>
+                                <div class="list-cell">Main Building:West Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28122</div>
+                                <div class="list-cell">Retire for goodness sake</div>
+                                <div class="list-cell">Main Building:North Campus</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28121</div>
+                                <div class="list-cell">Get back to the basics</div>
+                                <div class="list-cell">Warehouse</div>
+                            </div>
+                            <div class="list-row">
+                                <div class="list-cell">
+                                    <input type="checkbox" class="list-cb" />
+                                    <i class="fa fa-search-plus list-ico"></i>
+                                </div>
+                                <div class="list-cell">WO28120</div>
+                                <div class="list-cell">Go Christmas caroling</div>
+                                <div class="list-cell">Main Building:West Campus</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lp-footer">
+                        <input type="button" value="Current Workorder" class="action assignee toggleButton" />
+                    </div>
                 </div>
             </div>
             <div id="right-panel" class="right-panel">

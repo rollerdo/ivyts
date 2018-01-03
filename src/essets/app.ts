@@ -3,9 +3,11 @@ import { $Section, $String} from "../lib/ivy";
 import { Group, Groups, Person, Persons } from "./entity";
 
 export class EssetsApp extends $App {
+
     public constructor(owner: $Complex) {
         super(owner);
     }
+
     public persons = $ivy<Persons>(Persons);
     public groups = $ivy<Groups>(Groups);
 }

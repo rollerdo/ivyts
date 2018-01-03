@@ -1,8 +1,20 @@
-import { decamelCase, enableEvents } from "./utils";
+import { decamelCase, enableEvents, foreachProp } from "./utils";
 import { View } from "./views";
+
+let _app = null;
+
+export function $app() {
+    if (!_app) {
+        throw(new Error("$app is undefined"));
+    }
+    return _app;
+}
 
 export function $ivy<T extends $Property>(c: { new(owner?: $Property): T }, owner?: $Property): T {
     const obj: T = new c(owner);
+//    if (_app && obj.is($Persistent)) {
+//        _app.dBase.add(obj);
+//    }
     obj.fire("created");
     return obj;
 }
@@ -74,6 +86,8 @@ export abstract class $Property {
     public set caption(v: string) {
         this._caption = v;
     }
+
+    public abstract get changed();
 
     public get className() {
         if (!this._clsName) {
@@ -174,6 +188,8 @@ export abstract class $Property {
 
 export abstract class $Complex extends $Property {
 
+    private _changedSet = {};
+
     protected constructor(owner?: $Complex) {
         super(owner);
     }
@@ -182,12 +198,48 @@ export abstract class $Complex extends $Property {
 
     public abstract get count();
 
+    public get changed() {
+        return Object.keys(this._changedSet).length > 0;
+    }
+
+    public clearChanged() {
+        // Clear all children;
+        this.forEach(function(inst){
+            inst.clearChanged();
+        });
+        // Clear this instance from the owner's change registry
+        if (this.owner) {
+            this.owner.unregisterChanged(this);
+        }
+        this._changedSet = {};
+    }
+
     public toArray(): $Property[] {
         const ar: $Property[] = [];
         this.forEach((prop) => {
             ar.push(prop);
         });
         return ar;
+    }
+
+    public registerChanged(prop: $Property) {
+        // Add the object to the _changedSet
+        if (!this._changedSet[prop.key]) {
+            this._changedSet[prop.key] = prop;
+            // The owner needs to be added, too. (All the way up the line)
+            if (this.owner) {
+                this.owner.registerChanged(this);
+            }
+        }
+    }
+
+    public unregisterChanged(prop: $Property) {
+        if (this._changedSet[prop.key]) {
+            delete this._changedSet[prop.key];
+            if (this.owner) {
+                this.owner.unregisterChanged(this);
+            }
+        }
     }
 }
 
@@ -371,8 +423,9 @@ export abstract class $Persistent extends $Object {
 
     public ID = new $ID(this);
 
-    public get documentClass() {
-        return "Persistent";
+    // The key needs to survive across the Peristent Object's lifetime.
+    public get key() {
+        return this.ID.value;
     }
 }
 
@@ -380,10 +433,6 @@ export abstract class $Persistent extends $Object {
 export abstract class $Section extends $Object {
     protected constructor(owner?: $Complex) {
         super(owner);
-    }
-
-    public get documentClass() {
-        return "Section";
     }
 
     // By default a section is mandatory
@@ -395,9 +444,6 @@ export abstract class $Section extends $Object {
 // A small group of logically related mandatory fields (e.g. personal name) in a $Peristent object
 export abstract class $Component extends $Object {
 
-    public get documentClass() {
-        return "Component";
-    }
 }
 
 export type performFunc = (mem, i) => void;
@@ -426,18 +472,33 @@ export abstract class $Value extends $Property {
     private _calculation;
     private _initialValue;
     private _options = undefined;
+    private _changed = false;
 
     protected constructor(owner?: $Complex) {
         super(owner);
     }
 
-    public abstract convert(v: any): any;
-
-    public get displayValue() {
-        return this.value;
+    public get changed(): boolean {
+        return this._changed;
     }
 
-    public abstract get dataType();
+    public clearChanged() {
+        this._changed = false;
+        this.owner.unregisterChanged(this);
+    }
+
+    public setChanged() {
+        this._changed = true;
+        this.owner.registerChanged(this);
+    }
+
+    public abstract convert(v: any): any;
+
+    public abstract get dataType(): string;
+
+    public get displayValue(): string {
+        return this.value;
+    }
 
     public get value(): any {
 
@@ -499,6 +560,7 @@ export abstract class $Value extends $Property {
                 // todo: At some point, we will want to add a logChange method to create an undo trail
                 // this.changed = true;
                 // Fire the "changed" events to any interested listener
+                this.setChanged();
                 this.fire({ type: "changed", target: this, previous: _old, current: this._val });
                 // Notify the owner that we've changed.
                 if (this.owner) {
@@ -761,6 +823,9 @@ export class $JSONReader {
             }
             if (childInst.is($Value)) {
                 // Simply assign the childSource value to the childInst, and we're finished
+                // ivy does not use the null value, only undefined. Since JSON only uses null
+                // we convert all undefineds to nulls going in and convert them back to undefined
+                // coming out.
                 (childInst as $Value).value = childSource === null ? undefined : childSource ;
             } else if (childInst.is($Object)) {
                 // Recursively read the child object's properties
@@ -789,5 +854,6 @@ export class $JSONReader {
 export class $App extends $Persistent  {
     public constructor(owner: $Complex) {
         super(owner);
+        _app = this;
     }
 }

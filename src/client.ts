@@ -20,9 +20,9 @@ function getData() {
 }
 
 function createApp(json: string): void {
+    const app: EssetsApp = $ivy<EssetsApp>(EssetsApp);
     const frame = document.getElementById("frame");
     const objView = $ivy<AccordionObjectView>(AccordionObjectView);
-    const app: EssetsApp = $ivy<EssetsApp>(EssetsApp);
     app.fromJSON(json);
 //    app.views.add(objView);
     app.groups.toArray()[0].views.add(objView);

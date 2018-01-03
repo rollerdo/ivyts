@@ -1,7 +1,14 @@
-1. Add ability to know that a child property has changed from any level of parent
-2. Figure out what to do with icons
-3. Add actions and action objects and corresponding views
+1. (Completed) Fix JSON undefined.
+   a. All $Value properties have either a valid defined value or are set to undefined. When writing to JSON, undefined
+      values are stored as null but when rehydrated, all nulls are converted to undefined in their respective objects.
+2. (Completed) Add ability to know that a child property has changed from any level of parent
+   a. $Value.setChanged() sets the changed $Value and all its $Complex owners up the owner chain
+   b. $Property.clearChanged() clears the changed property for itself and all its children.
+   c. $Complex properties maintain an object set that contains a key for each of its direct children that have 
+      changed. When the set is empty, the changed property will be false; otherwise it is true. 
+3. Create basic view engines: AppView, ActionView, SectionView, TableView, ObjectView 
+   a. Add actions and action objects and corresponding views
+   b. Add sequencing support 
+5. Figure out what to do with icons
 
-Notes:
-1. All $Value properties have either a valid defined value or are set to undefined. When writing to JSON, undefined
-    values are stored as null but when rehydrated, all nulls are converted to undefined in their respective objects.
+Notes on completed items:
