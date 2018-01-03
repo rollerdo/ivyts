@@ -115,15 +115,15 @@ body{
 .selected{
     color:#eeeeee;
 }
-.logo:hover{
+.root-logo:hover{
     cursor: pointer;
     color: #eeeeee;
 }
-.menu-item:hover{
+.root-menu-item:hover{
     cursor: pointer;
     color: #eeeeee;
 }
-.settings-item:hover{
+.root-settings-item:hover{
     cursor: pointer;
     color: #eeeeee;
 }
@@ -144,52 +144,26 @@ body{
     overflow: hidden;
     background-color: white;
 }
-.list-banner{
+.list-heading{
     padding-left: 15px;
     padding-top: 20px;
     height: 40px;
-    width: 100%;
     border-bottom: thin solid #39bf7c;
-}
-.lp-banner-scrollable{
-    width: 1000px;
+    width: 2000px;
     overflow: hidden;
 }
-.lp-body{
-    height: calc(100% - 80px);
-    width: 100%;
-}
-.lp-footer{
-    height: 40px;
-    width: 100%;
-    border-top: thin solid #39bf7c;
-}
-.scrollable{
-    height: calc(100% - 80px);
-    padding-top: 10px;
-    overflow-y: scroll;
-    overflow-x: hidden;
-}
-.list-body{
-    display: block;
-    width: 1000px;
-    height: auto;
-    overflow: hidden;
-}
-.list-heading{
+.list-heading-cell{
     float: left;
     font-weight: bold;
     overflow: hidden;
 }
-.list-cb{
-    margin-left: 6px;
-}
-.list-ico{
-    margin-left: 6px;
-    color: #39bf7c;
-}
-.list-ico:hover{
-    cursor: pointer;
+.list-body{
+    height: calc(100% - 80px);
+    padding-top: 10px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: block;
+    width: 2000px;
 }
 .list-row{
     display: table-row;
@@ -204,6 +178,21 @@ body{
     line-height:14px;
     padding-bottom:10px;
     padding-left: 15px;
+}
+.list-footer{
+    height: 40px;
+    width: 100%;
+    border-top: thin solid #39bf7c;
+}
+.list-cb{
+    margin-left: 6px;
+}
+.list-ico{
+    margin-left: 6px;
+    color: #39bf7c;
+}
+.list-ico:hover{
+    cursor: pointer;
 }
 .right-panel{
     width:500px;
