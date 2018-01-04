@@ -7,8 +7,8 @@
    c. $Complex properties maintain an object set that contains a key for each of its direct children that have 
       changed. When the set is empty, the changed property will be false; otherwise it is true. 
 3. Create basic view engines: AppView, ActionView, SectionView, TableView, ObjectView 
-   a. Add actions and action objects and corresponding views
-   b. Add sequencing support 
-5. Figure out what to do with icons
+   a. Add actions objects and support them in views
+   b. Modify HTML test and produce same styles in View rendering engines.
+   c. Add sequencing support
+   d. Figure out what to do with icons
 
-Notes on completed items:

@@ -16,9 +16,9 @@ const result = writer.write(essets, 0);
 console.log("\nHuman-readable:\n" + result);
 
 json = essets.toJSON();
-essets.persons.toArray()[0].clearChanged();
-essets.persons.toArray()[0].basicInfo.name.first.value = "George";
-essets.persons.toArray()[1].clearChanged();
+essets.dataSet.persons.toArray()[0].clearChanged();
+essets.dataSet.persons.toArray()[0].basicInfo.name.first.value = "George";
+essets.dataSet.persons.toArray()[1].clearChanged();
 console.log("Original JSON:\n" + json);
 
 const newEssets = $ivy<EssetsApp>(EssetsApp);

@@ -8,6 +8,16 @@ export class EssetsApp extends $App {
         super(owner);
     }
 
+    public dataSet = $ivy<DataSets>(DataSets);
+
+}
+
+export class DataSets extends $Persistent {
+
+    public constructor(owner: $Complex) {
+        super(owner);
+    }
+
     public persons = $ivy<Persons>(Persons);
     public groups = $ivy<Groups>(Groups);
 }
