@@ -24,8 +24,7 @@ function createApp(json: string): void {
     const frame = document.getElementById("frame");
     const objView = $ivy<AccordionObjectView>(AccordionObjectView);
     app.fromJSON(json);
-//    app.views.add(objView);
-    app.dataSet.groups.toArray()[0].views.add(objView);
+    app.dataSet.persons.toArray()[0].views.add(objView);
     objView.insert(frame);
 }
 

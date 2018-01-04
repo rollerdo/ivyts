@@ -1,0 +1,126 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#39bf7c">
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+    <script src="https://use.fontawesome.com/949761f2bc.js"></script>
+</head>
+
+<body>
+    <div class="app">
+        <div class="banner">
+            <div class="app-title">
+                <div>eSSETS</div>
+            </div>
+            <div id="app-actions" class="app-actions">
+                <div class="app-actions-item selected">
+                    <div>ToDoQ</div>
+                </div>
+                <div class="app-actions-item">
+                    <div>Places</div>
+                </div>
+                <div class="app-actions-item">
+                    <div>Things</div>
+                </div>
+                <div class="app-actions-item">
+                    <div>People</div>
+                </div>
+                <div class="app-actions-item">
+                    <div>Groups</div>
+                </div>
+                <div class="app-actions-item">
+                    <div>Reports</div>
+                </div>
+            </div>
+            <div class="app-settings">
+                <div class="app-settings-item">
+                    <div>?</div>
+                </div>
+                <div class="app-settings-item ico">
+                    <i class="fa fa-gear"></i>
+                </div>
+            </div>
+        </div>
+        <div class="tools">
+        </div>
+        <div class="main-body">
+            <div id="left-panel" class="left-panel">
+            </div>
+            <div id="right-panel" class="right-panel">
+            </div>
+        </div>
+    </div>
+    <script>
+        var aces, mains, showAll = false, display = null;
+        function hasClass(element, cls) {
+            return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
+        }
+        function accordionAction(e) {
+            var ace = e.target, i;
+            while (!hasClass(ace, "accordion-entry")) {
+                if (hasClass(ace, "entry-main")) {
+                    return;
+                }
+                ace = ace.parentElement;
+            }
+            if (!showAll) {
+                for (i = 0; i < aces.length; i++) {
+                    if (ace === aces[i]) {
+                        mains[i].style.display = "inline";
+                    }
+                    else {
+                        aces[i].style.display = "none";
+                    }
+                }
+
+                showAll = true;
+            }
+            else {
+                for (i = 0; i < aces.length; i++) {
+                    aces[i].style.display = display;
+                    mains[i].style.display = "none";
+                }
+                showAll = false;
+            }
+        }
+
+        function switchWindow(e) {
+            var left = document.getElementById("left-panel");
+            var right = document.getElementById("right-panel");
+            if (e.target.value === "My Assignments") {
+                right.style.display = "none";
+                left.style.display = "inline";
+                left.style.width = "100%";
+            }
+            else {
+                left.style.display = "none";
+                right.style.display = "inline";
+                right.style.width = "100%";
+            }
+        }
+
+        function main() {
+            var elems = document.getElementsByClassName("measure"), i;
+            var wid = document.getElementsByClassName("list-heading-cell");
+            for (i = 0; i < elems.length; i++) {
+                wid[i].setAttribute("style", "width: " + elems[i].clientWidth + "px;");
+            }
+            elems = document.getElementsByClassName("toggleButton");
+            for (i = 0; i < elems.length; i++) {
+                elems[i].onclick = switchWindow;
+            }
+            aces = document.getElementsByClassName("accordion-entry");
+            for (i = 0; i < aces.length; i++) {
+                aces[i].onclick = accordionAction;
+                if (display = null) {
+                    display = aces[i].style.display;
+                }
+            }
+            mains = document.getElementsByClassName("entry-main");
+        }
+        window.onload = main;
+    </script>
+</body>
+
+</html>
