@@ -437,12 +437,13 @@ export abstract class View extends HtElement {
     protected _model: $Property = undefined;
     protected _shouldRefresh = true;
     protected _level: number;
+    protected _cssClass: string = null;
 
     public get level() {
         return this._level;
     }
 
-    constructor(owner?: $Complex) {
+    public constructor(owner?: $Complex) {
         super(owner);
         this.on("created", () => {
             this.initializeView();
@@ -462,6 +463,14 @@ export abstract class View extends HtElement {
 
     protected createElement() {
         return document.createElement("div");
+    }
+
+    public get CssClass(): string {
+        return this._cssClass ? this._cssClass : this.className;
+    }
+
+    public set CssClass(val: string) {
+        this.CssClass = val;
     }
 
     public get model(): $Property {
@@ -767,4 +776,8 @@ export class AccordionCollectionView extends AccordionView {
         super.model = mod as $Collection;
     }
 
+}
+
+export class ListView extends ComplexView {
+    
 }

@@ -61,11 +61,11 @@ body{
     margin: 10% auto; /* centered */
 }
 
-.app{
+.body{
     width:100%;
     height: 100%;
 }
-.banner{
+.app{
     width: 100%;
     height: 60px;
     background-color: #2c3e50;
@@ -80,11 +80,15 @@ body{
     height: 60px;
     line-height: 60px;
 }
+.app-title:hover{
+    cursor: pointer;
+    color: #eeeeee;
+}
 .app-actions{
     width:calc(100% - 180px);
     float: left;
 }
-.app-actions-item{
+.app-action{
     color: #39bf7c;
     float: left;
     background-color: #2c3e50;
@@ -94,10 +98,14 @@ body{
     height: 60px;
     line-height: 60px
 }
+.app-action:hover{
+    cursor: pointer;
+    color: #eeeeee;
+}
 .app-settings{
     float:right;
 }
-.app-settings-item{
+.app-setting{
     width:50px;
     float: left;
     color: #39bf7c;
@@ -109,30 +117,22 @@ body{
     height: 60px;
     line-height: 60px
 }
+.app-setting:hover{
+    cursor: pointer;
+    color: #eeeeee;
+}
 .ico{
     padding-top:16px;
 }
 .selected{
     color:#eeeeee;
 }
-.app-title:hover{
-    cursor: pointer;
-    color: #eeeeee;
-}
-.app-actions-item:hover{
-    cursor: pointer;
-    color: #eeeeee;
-}
-.app-settings-item:hover{
-    cursor: pointer;
-    color: #eeeeee;
-}
 .tools{
     width: 100%;
     height: 60px;
     background-color:#ecf0f1;
 }
-.main-body{
+.main{
     width: 100%;
     height: calc(100% - 120px);
     background-color:black;
@@ -144,7 +144,7 @@ body{
     overflow: hidden;
     background-color: white;
 }
-.list-heading{
+.list-columns{
     padding-left: 15px;
     padding-top: 20px;
     height: 40px;
@@ -152,7 +152,7 @@ body{
     width: 2000px;
     overflow: hidden;
 }
-.list-heading-cell{
+.list-column{
     float: left;
     font-weight: bold;
     overflow: hidden;
@@ -201,7 +201,7 @@ body{
     background-color: white;
     color: #2c3e50;
 }
-.rp-banner{
+.detail-heading{
     text-align: center;
     background-color: #39bf7c;
     color: white;
@@ -213,7 +213,7 @@ body{
     border-bottom: thin solid #39bf7c;
     border-left: thin solid #39bf7c;
 }
-.rp-body{
+.detail-body{
     height: calc(100% - 80px);
     width: 100%;
     border-left: thin solid #39bf7c;
@@ -239,19 +239,13 @@ body{
 .toggleButton{
     display: none;
 }
-.accordion{
-    width:100%;
-}
-.accordion-entry{
+.detail-body-section{
     padding: 5px;
     border: thin darkgray solid;
     background-color: #F4F0F0;
 }
-.accordion-entry:hover{
+.detail-body-section:hover{
     cursor: pointer;
-}
-.entry-main{
-    display: none;
 }
 .entry-topic{
     font-size: 11pt;
@@ -259,7 +253,7 @@ body{
     font-weight: bold;
     text-align: left;
 }
-.odd-entry{
+.odd{
     background-color: white;
 }
 .entry-info{
@@ -286,7 +280,7 @@ body{
 
 
 @media screen and (max-width: 780px){
-    .app-actions-item{
+    .app-action{
         height: 30px;
         line-height: 30px;
     }
@@ -302,13 +296,13 @@ body{
 }
 
 @media screen and (max-width: 480px) {
-    .banner{
+    .app{
         height: 90px;
     }
-    .app-title, .app-settings-item{
+    .app-title, .app-setting{
         line-height:90px;
     }
-    .main-body{
+    .main{
         height: calc(100% - 150px);
     }
     .ico{
