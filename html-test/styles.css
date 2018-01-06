@@ -144,7 +144,7 @@ body{
     overflow: hidden;
     background-color: white;
 }
-.list-columns{
+.table-columns{
     padding-left: 15px;
     padding-top: 20px;
     height: 40px;
@@ -152,12 +152,12 @@ body{
     width: 2000px;
     overflow: hidden;
 }
-.list-column{
+.table-column{
     float: left;
     font-weight: bold;
     overflow: hidden;
 }
-.list-body{
+.table-rows{
     height: calc(100% - 80px);
     padding-top: 10px;
     overflow-y: scroll;
@@ -165,33 +165,33 @@ body{
     display: block;
     width: 2000px;
 }
-.list-row{
+.table-row{
     display: table-row;
     border-collapse: collapse;
     table-layout: fixed;
     height: 24px;
     line-height: 24px;
 }
-.list-cell{
+.table-cell{
     display: table-cell;
     max-width: 210px;
     line-height:14px;
     padding-bottom:10px;
     padding-left: 15px;
 }
-.list-footer{
+.table-footer{
     height: 40px;
     width: 100%;
     border-top: thin solid #39bf7c;
 }
-.list-cb{
+.table-cb{
     margin-left: 6px;
 }
-.list-ico{
+.table-ico{
     margin-left: 6px;
     color: #39bf7c;
 }
-.list-ico:hover{
+.table-ico:hover{
     cursor: pointer;
 }
 .right-panel{
