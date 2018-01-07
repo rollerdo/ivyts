@@ -17,7 +17,7 @@ export class PersonalName extends Name {
     public last = new $String(this);
 
     get displayValue(): any {
-        return this.first.value + " " + this.middle.value + " " + this.last.value;
+        return this.last.value + ", " + this.first.value + (this.middle.value ? (" " + this.middle.value) : "");
     }
 }
 
