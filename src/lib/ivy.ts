@@ -12,9 +12,6 @@ export function $app() {
 
 export function $ivy<T extends $Property>(c: { new(owner?: $Property): T }, owner?: $Property): T {
     const obj: T = new c(owner);
-//    if (_app && obj.is($Persistent)) {
-//        _app.dBase.add(obj);
-//    }
     obj.fire("created");
     return obj;
 }

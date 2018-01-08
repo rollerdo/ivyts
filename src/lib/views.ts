@@ -435,7 +435,6 @@ export class DateInput extends Input {
 export abstract class View extends HtElement {
 
     protected _model: $Property = undefined;
-    protected _shouldRefresh = true;
     protected _level: number;
     protected _cssClass: string = null;
 
@@ -516,13 +515,6 @@ export abstract class View extends HtElement {
     public refresh() {
     }
 
-    public get shouldRefresh() {
-        return this._shouldRefresh;
-    }
-
-    public set shouldRefresh(val: boolean) {
-        this._shouldRefresh = val;
-    }
 }
 
 export abstract class ControlView extends View {
@@ -616,24 +608,31 @@ export class DataPropertyView extends ControlView {
 
 export class PropertyGroup extends ControlView {
 
+    protected _pgrp: Div = undefined;
+    protected _hdng: Div = undefined;
     constructor(owner?: $Complex) {
         super(owner);
-        this.on("clicked", (event) => {
-            alert("clicked");
-        });
     }
 
-    public properties: Div;
+    public get heading(): Div {
+        if (!this._hdng) {
+            this._hdng = this.createHeading();
+        }
+        return this._hdng;
+    }
+
+    public get body(): Div {
+        if (!this._pgrp) {
+            this._pgrp = this.createBody();
+        }
+        return this._pgrp;
+    }
 
     protected createLabel() {
         const _inst = $ivy<DivLabel>(DivLabel, this);
         _inst.className = "label";
         _inst.classList.add("label");
-        this.appendChild(_inst);
-        _inst.onclick = (ev) => {
-            this.properties.hidden = this.properties.hidden ? false : true;
-            ev.cancelBubble = true;
-        };
+        this.heading.appendChild(_inst);
         return _inst;
     }
 
@@ -641,18 +640,23 @@ export class PropertyGroup extends ControlView {
         const _inst = $ivy<DivLabel>(DivLabel, this);
         _inst.className = "control";
         _inst.classList.add("control");
-        this.appendChild(_inst);
-        _inst.onclick = (ev) => {
-            this.properties.hidden = this.properties.hidden ? false : true;
-            ev.cancelBubble = true;
-        };
+        this.heading.appendChild(_inst);
         return _inst;
     }
 
-    protected createPropertyGroup(): Div {
+    protected createBody(): Div {
         const _inst = $ivy<Div>(Div, this);
-        _inst.className = "properties";
-        _inst.classList.add("properties");
+        _inst.className = "body";
+        _inst.classList.add("body");
+        _inst.classList.add("level-" + this.level);
+        this.appendChild(_inst);
+        return _inst;
+    }
+
+    protected createHeading(): Div {
+        const _inst = $ivy<Div>(Div, this);
+        _inst.className = "heading";
+        _inst.classList.add("heading");
         _inst.classList.add("level-" + this.level);
         this.appendChild(_inst);
         return _inst;
@@ -660,7 +664,6 @@ export class PropertyGroup extends ControlView {
 
     public construct() {
         super.construct();
-        this.properties = this.createPropertyGroup();
     }
 }
 
@@ -670,8 +673,8 @@ export abstract class ComplexView extends PropertyGroup {
         super(owner);
     }
 
-    protected abstract createCollectionView(): ComplexView ;
-    protected abstract createObjectView(): ComplexView ;
+    protected abstract createCollectionView(): ComplexView;
+    protected abstract createObjectView(): ComplexView;
     protected createDataPropertyView(): DataPropertyView {
         return $ivy<DataPropertyView>(DataPropertyView, this);
     }
@@ -706,7 +709,7 @@ export abstract class ComplexView extends PropertyGroup {
                 view = this.createView(prop);
                 if (view) {
                     view.model = prop;
-                    this.properties.appendChild(view);
+                    this.body.appendChild(view);
                 }
             });
         }
@@ -714,12 +717,9 @@ export abstract class ComplexView extends PropertyGroup {
 
     public refresh() {
         super.refresh();
-        if (this.shouldRefresh) {
-            this.model.forEach((prop: $Property) => {
-                prop.refreshViews();
-            });
-            //            this.shouldRefresh = false;
-        }
+        this.model.forEach((prop: $Property) => {
+            prop.refreshViews();
+        });
     }
 
 }
@@ -728,6 +728,24 @@ export class AccordionView extends ComplexView {
 
     public constructor(owner?: $Complex) {
         super(owner);
+        this.on("created", (event) => {
+            if (this.level === 1) {
+                this.classList.add("accordion-header");
+            } else if (this.level === 2) {
+                this.classList.add("accordion-folder");
+            } else {
+                this.classList.add("accordion-section");
+            }
+            if (this.level === 2) {
+                this.on("constructed", (ev) => {
+                    this.body.hidden = true;
+                    this.heading.onclick = (e) => {
+                        this.body.hidden = this.body.hidden ? false : true;
+                        e.cancelBubble = true;
+                    };
+                });
+            }
+        });
     }
 
     protected createCollectionView(): AccordionCollectionView {
@@ -740,16 +758,13 @@ export class AccordionView extends ComplexView {
 
     public construct() {
         super.construct();
-        if (this.level > 1) {
-            this.properties.hidden = true;
-        }
     }
 }
 
 export class AccordionObjectView extends AccordionView {
     public constructor(owner?: $Complex) {
         super(owner);
-        this.classList.add("object");
+
     }
 
     public get model(): $Object {
@@ -765,7 +780,7 @@ export class AccordionObjectView extends AccordionView {
 export class AccordionCollectionView extends AccordionView {
     public constructor(owner?: $Complex) {
         super(owner);
-        this.classList.add("collection");
+        this.classList.add("accordion-collection");
     }
 
     public get model(): $Collection {
@@ -776,8 +791,4 @@ export class AccordionCollectionView extends AccordionView {
         super.model = mod as $Collection;
     }
 
-}
-
-export class ListView extends ComplexView {
-    
 }

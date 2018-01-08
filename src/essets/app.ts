@@ -1,5 +1,6 @@
 import { $App, $Boolean, $Collection, $Complex, $Component, $Date, $ivy, $Number, $Persistent } from "../lib/ivy";
 import { $Section, $String} from "../lib/ivy";
+import { View} from "../lib/views";
 import { Group, Groups, Person, Persons } from "./entity";
 
 export class EssetsApp extends $App {

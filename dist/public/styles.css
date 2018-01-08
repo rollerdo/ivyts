@@ -64,18 +64,33 @@ body{
     height: 22px;
     line-height: 22px;
     vertical-align: middle;
-    display: inline-block;
     margin-bottom: 2px;
 }
 
+.level-4.control, .level-4.label, .level-4.input, .level-4.readOnly {
+    display: inline-block;
+}
+
+.level-3 {
+    margin-left: 5px;
+}
+.level-3.control {
+    display: none;
+}
+.level-4 {
+    margin-left: 5px;
+}
+.level-4.label {
+    width: 110px;
+}
 .input, .select, .readOnly {
     width: 130px;
 }
 
-.label, .control:hover {
+.level-2 {
     cursor: pointer;
 }
-
+/*
 .label.level-1 {
     width: 130px;
 }
@@ -94,3 +109,4 @@ body{
     width: 85px;
     margin-left: 45px;
 }
+*/
