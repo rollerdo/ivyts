@@ -438,7 +438,7 @@ export abstract class View extends HtElement {
     protected _level: number;
     protected _cssClass: string = null;
 
-    public get level() {
+    public get level(): number {
         return this._level;
     }
 
@@ -449,7 +449,7 @@ export abstract class View extends HtElement {
         });
     }
 
-    protected initializeView() {
+    protected initializeView(): void {
 
         if (this.owner) {
             const cv: ComplexView = this.owner as ComplexView;
@@ -460,7 +460,7 @@ export abstract class View extends HtElement {
         this.classList.add("level-" + this.level);
     }
 
-    protected createElement() {
+    protected createElement(): HTMLElement {
         return document.createElement("div");
     }
 
@@ -490,7 +490,7 @@ export abstract class View extends HtElement {
         }
     }
 
-    public insert(parentElem, refresh?) {
+    public insert(parentElem, refresh?): void {
         parentElem.appendChild(this.elem);
         if (this.is(View)) {
             if ((typeof refresh === "undefined") || refresh) {
@@ -501,9 +501,10 @@ export abstract class View extends HtElement {
 
     // this.construct() manages any necessary changes to the view's actual structure that are necessary as a result of
     // the assignment of a new model property.
-    protected abstract construct();
+    protected construct(): void {
+    }
 
-    public destroy() {
+    public destroy(): void {
         const _elem = this.elem;
         while (_elem.firstChild) {
             _elem.removeChild(_elem.firstChild);
@@ -512,9 +513,16 @@ export abstract class View extends HtElement {
 
     // this.refresh() updates the data displayed by the view and its associated HtElements. It responds to changes
     // in the data held by the existing model.
-    public refresh() {
+    public refresh(): void {
     }
 
+}
+
+export class FrameView extends View {
+    protected construct(): void {
+        this.classList.add("accordion");
+        this.classList.add("frame");
+    }
 }
 
 export abstract class ControlView extends View {
@@ -610,6 +618,8 @@ export class PropertyGroup extends ControlView {
 
     protected _pgrp: Div = undefined;
     protected _hdng: Div = undefined;
+    protected _foot: Div = undefined;
+
     constructor(owner?: $Complex) {
         super(owner);
     }
@@ -621,11 +631,18 @@ export class PropertyGroup extends ControlView {
         return this._hdng;
     }
 
-    public get body(): Div {
+    public get main(): Div {
         if (!this._pgrp) {
-            this._pgrp = this.createBody();
+            this._pgrp = this.createMain();
         }
         return this._pgrp;
+    }
+
+    public get footer(): Div {
+        if (!this._foot) {
+            this._foot = this.createFooter();
+        }
+        return this._foot;
     }
 
     protected createLabel() {
@@ -638,16 +655,17 @@ export class PropertyGroup extends ControlView {
 
     protected createControl() {
         const _inst = $ivy<DivLabel>(DivLabel, this);
+        const _inst2 = $ivy<Div>(Div);
         _inst.className = "control";
         _inst.classList.add("control");
         this.heading.appendChild(_inst);
         return _inst;
     }
 
-    protected createBody(): Div {
+    protected createMain(): Div {
         const _inst = $ivy<Div>(Div, this);
-        _inst.className = "body";
-        _inst.classList.add("body");
+        _inst.className = "main";
+        _inst.classList.add("main");
         _inst.classList.add("level-" + this.level);
         this.appendChild(_inst);
         return _inst;
@@ -657,6 +675,15 @@ export class PropertyGroup extends ControlView {
         const _inst = $ivy<Div>(Div, this);
         _inst.className = "heading";
         _inst.classList.add("heading");
+        _inst.classList.add("level-" + this.level);
+        this.appendChild(_inst);
+        return _inst;
+    }
+
+    protected createFooter(): Div {
+        const _inst = $ivy<Div>(Div, this);
+        _inst.className = "footer";
+        _inst.classList.add("footer");
         _inst.classList.add("level-" + this.level);
         this.appendChild(_inst);
         return _inst;
@@ -709,7 +736,7 @@ export abstract class ComplexView extends PropertyGroup {
                 view = this.createView(prop);
                 if (view) {
                     view.model = prop;
-                    this.body.appendChild(view);
+                    this.main.appendChild(view);
                 }
             });
         }
@@ -724,23 +751,31 @@ export abstract class ComplexView extends PropertyGroup {
 
 }
 
+enum accorionState {open, closed}
 export class AccordionView extends ComplexView {
 
     public constructor(owner?: $Complex) {
         super(owner);
         this.on("created", (event) => {
             if (this.level === 1) {
-                this.classList.add("accordion-header");
+                this.classList.add("acc");
             } else if (this.level === 2) {
-                this.classList.add("accordion-folder");
+                this.classList.add("acc-folder");
             } else {
-                this.classList.add("accordion-section");
+                this.classList.add("acc-section");
             }
             if (this.level === 2) {
                 this.on("constructed", (ev) => {
-                    this.body.hidden = true;
+                    this.main.hidden = true;
+                    this.footer.hidden = true;
                     this.heading.onclick = (e) => {
-                        this.body.hidden = this.body.hidden ? false : true;
+                        if (this.main.hidden) {
+                            this.main.hidden = false ;
+                            this.footer.hidden = false ;
+                        } else {
+                            this.main.hidden = true;
+                            this.footer.hidden = true;
+                        }
                         e.cancelBubble = true;
                     };
                 });
@@ -748,12 +783,12 @@ export class AccordionView extends ComplexView {
         });
     }
 
-    protected createCollectionView(): AccordionCollectionView {
-        return $ivy<AccordionCollectionView>(AccordionCollectionView, this);
+    protected createCollectionView(): AccCollectionFolder {
+        return $ivy<AccCollectionFolder>(AccCollectionFolder, this);
     }
 
-    protected createObjectView(): AccordionObjectView {
-        return $ivy<AccordionObjectView>(AccordionObjectView, this);
+    protected createObjectView(): AccObjectFolder {
+        return $ivy<AccObjectFolder>(AccObjectFolder, this);
     }
 
     public construct() {
@@ -761,7 +796,7 @@ export class AccordionView extends ComplexView {
     }
 }
 
-export class AccordionObjectView extends AccordionView {
+export class AccObjectFolder extends AccordionView {
     public constructor(owner?: $Complex) {
         super(owner);
 
@@ -777,7 +812,19 @@ export class AccordionObjectView extends AccordionView {
 
 }
 
-export class AccordionCollectionView extends AccordionView {
+export class Accordion extends AccordionView {
+
+    public get model(): $Object {
+        return super.model as $Object;
+    }
+
+    public set model(mod: $Object) {
+        super.model = mod;
+    }
+
+}
+
+export class AccCollectionFolder extends AccordionView {
     public constructor(owner?: $Complex) {
         super(owner);
         this.classList.add("accordion-collection");

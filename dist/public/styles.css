@@ -61,10 +61,89 @@ body{
 }
 
 .control, .label, .input, .select, .readOnly {
-    height: 22px;
-    line-height: 22px;
     vertical-align: middle;
     margin-bottom: 2px;
+}
+
+.frame {
+    width: 500px;
+    border-style: solid;
+    border-width: thin;
+    border-color: #2e9963; 
+    border-bottom: none;
+}
+
+.level-1.heading {
+    width: 100%;
+    background-color: #2e9963 ; 
+    color: white;
+    padding-top: 9px;
+    text-align: center;
+    vertical-align: middle;
+    height: 50px;
+}
+.level-1.label {
+    font-weight: bold;
+}
+
+.level-1.control {
+    font-size: small;
+    font-weight: lighter;
+}
+
+
+.level-2.main {
+    line-height: 20px;
+    border-color: #2e9963; 
+    border-width: thin;
+    border-style: solid;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+.level-2.label {
+    font-weight: bolder;
+}
+
+.level-2.control {
+    font-weight: lighter;
+    font-size: small;
+}
+
+.level-2.heading {
+    border-color: #2e9963; 
+    border-width: thin;
+    border-style: solid;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    background-color: #b9ebd2;
+    color: #34495e ;
+    width: 100%;
+    height: 40px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    text-align: center;
+    padding: 0px;
+    padding-top: 5px;
+    margin-top: 2px;
+}
+
+.level-2.footer {
+    width: 100%;
+    height: 40px;
+    background-color: white;
+    border-color: #2e9963; 
+    border-width: thin;
+    border-style: solid;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 .level-4.control, .level-4.label, .level-4.input, .level-4.readOnly {
@@ -87,26 +166,6 @@ body{
     width: 130px;
 }
 
-.level-2 {
+.level-2.heading {
     cursor: pointer;
 }
-/*
-.label.level-1 {
-    width: 130px;
-}
-
-.label.level-2 {
-    width: 115px;
-    margin-left: 15px;
-}
-
-.label.level-3 {
-    width: 100px;
-    margin-left: 30px;
-}
-
-.label.level-4 {
-    width: 85px;
-    margin-left: 45px;
-}
-*/
