@@ -348,7 +348,7 @@ export class ViewCollection extends $TypedCollection<View> {
 
 export abstract class $Object extends $Complex {
 
-    protected _props: $Property[] = [];
+    protected _props: $Property[];
 
     private _names = {};
 
@@ -357,6 +357,7 @@ export abstract class $Object extends $Complex {
     }
 
     public initProperties(): void {
+        this._props = [];
         let _v: $Property, _n: string;
         for (_n in this) {
             _v = this[_n];

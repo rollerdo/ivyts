@@ -436,7 +436,6 @@ export abstract class View extends HtElement {
 
     protected _model: $Property = undefined;
     protected _level: number;
-    protected _cssClass: string = null;
 
     public get level(): number {
         return this._level;
@@ -462,14 +461,6 @@ export abstract class View extends HtElement {
 
     protected createElement(): HTMLElement {
         return document.createElement("div");
-    }
-
-    public get CssClass(): string {
-        return this._cssClass ? this._cssClass : this.className;
-    }
-
-    public set CssClass(val: string) {
-        this.CssClass = val;
     }
 
     public get model(): $Property {
@@ -502,6 +493,7 @@ export abstract class View extends HtElement {
     // this.construct() manages any necessary changes to the view's actual structure that are necessary as a result of
     // the assignment of a new model property.
     protected construct(): void {
+        this.classList.add(this.className);
     }
 
     public destroy(): void {
@@ -520,7 +512,6 @@ export abstract class View extends HtElement {
 
 export class FrameView extends View {
     protected construct(): void {
-        this.classList.add("accordion");
         this.classList.add("frame");
     }
 }
@@ -531,6 +522,7 @@ export abstract class ControlView extends View {
 
     protected construct() {
         // Create a label for this view
+        super.construct();
         this.label = this.createLabel();
         this.label.classList.add("label");
         this.label.classList.add("level-" + this.level);
@@ -700,9 +692,9 @@ export abstract class ComplexView extends PropertyGroup {
         super(owner);
     }
 
-    protected abstract createCollectionView(): ComplexView;
-    protected abstract createObjectView(): ComplexView;
-    protected createDataPropertyView(): DataPropertyView {
+    protected abstract createCollectionView(prop: $Property): ComplexView;
+    protected abstract createObjectView(prop: $Property): ComplexView;
+    protected createDataPropertyView(prop: $Property): DataPropertyView {
         return $ivy<DataPropertyView>(DataPropertyView, this);
     }
 
@@ -711,11 +703,11 @@ export abstract class ComplexView extends PropertyGroup {
         if (prop.is($ID)) {
             // Ignore $IDs for now
         } else if (prop.is($Collection)) {
-            view = this.createCollectionView();
+            view = this.createCollectionView(prop);
         } else if (prop.is($Object)) {
-            view = this.createObjectView();
+            view = this.createObjectView(prop);
         } else if (prop.is($Value)) {
-            view = this.createDataPropertyView();
+            view = this.createDataPropertyView(prop);
         }
         return view;
     }
@@ -754,6 +746,10 @@ export abstract class ComplexView extends PropertyGroup {
 enum accorionState {open, closed}
 export class AccordionView extends ComplexView {
 
+    public get owner (): Accordion {
+        return super.owner as Accordion;
+    }
+
     public constructor(owner?: $Complex) {
         super(owner);
         this.on("created", (event) => {
@@ -769,13 +765,7 @@ export class AccordionView extends ComplexView {
                     this.main.hidden = true;
                     this.footer.hidden = true;
                     this.heading.onclick = (e) => {
-                        if (this.main.hidden) {
-                            this.main.hidden = false ;
-                            this.footer.hidden = false ;
-                        } else {
-                            this.main.hidden = true;
-                            this.footer.hidden = true;
-                        }
+                        this.owner.folderClicked(this);
                         e.cancelBubble = true;
                     };
                 });
@@ -796,11 +786,7 @@ export class AccordionView extends ComplexView {
     }
 }
 
-export class AccObjectFolder extends AccordionView {
-    public constructor(owner?: $Complex) {
-        super(owner);
-
-    }
+export class Accordion extends AccordionView {
 
     public get model(): $Object {
         return super.model as $Object;
@@ -810,9 +796,24 @@ export class AccObjectFolder extends AccordionView {
         super.model = mod;
     }
 
+    public folderClicked(folder: AccordionView) {
+        if (folder.main.hidden) {
+            folder.main.hidden = false ;
+            folder.footer.hidden = false ;
+        } else {
+            folder.main.hidden = true;
+            folder.footer.hidden = true;
+        }
+
+    }
+
 }
 
-export class Accordion extends AccordionView {
+export class AccObjectFolder extends AccordionView {
+    public constructor(owner?: $Complex) {
+        super(owner);
+
+    }
 
     public get model(): $Object {
         return super.model as $Object;

@@ -26,6 +26,7 @@ function createApp(json: string): void {
     app.fromJSON(json);
     objView.model = app.dataSet.persons.toArray()[0];
     objView.insert(frame);
+    console.log(objView.toArray().length);
 }
 
 main();
