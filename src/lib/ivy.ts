@@ -419,7 +419,7 @@ export abstract class $Persistent extends $Object {
         });
     }
 
-    public ID = new $ID(this);
+    public ID = $ivy<$ID>($ID, this);
 
     // The key needs to survive across the Peristent Object's lifetime.
     public get key() {

@@ -12,9 +12,9 @@ export class PersonalName extends Name {
         super(owner);
     }
 
-    public first = new $String(this);
-    public middle = new $String(this);
-    public last = new $String(this);
+    public first = $ivy<$String>($String, this);
+    public middle = $ivy<$String>($String, this);
+    public last = $ivy<$String>($String, this);
 
     get displayValue(): any {
         return this.last.value + ", " + this.first.value + (this.middle.value ? (" " + this.middle.value) : "");
@@ -25,8 +25,8 @@ export class GroupName extends Name {
     constructor(owner?: $Complex) {
         super(owner);
     }
-    public primary = new $String(this);
-    public secondary = new $String(this);
+    public primary = $ivy<$String>($String, this);
+    public secondary = $ivy<$String>($String, this);
     get displayValue(): any {
         return this.primary.value + (this.secondary.value ? (" " + this.secondary.value) : "");
     }
@@ -47,9 +47,9 @@ export class PersonalInfo extends Info {
         });
         this.gender.options = { f: "Female", m: "Male" };
     }
-    public birthday = new $Date(this);
-    public age = new $Number(this);
-    public gender = new $String(this);
+    public birthday = $ivy<$Date>($Date, this);
+    public age = $ivy<$Number>($Number, this);
+    public gender = $ivy<$String>($String, this);
 
     get displayValue(): any {
         return this.gender.options[this.gender.value] + ", Age " + this.age.value;
@@ -61,7 +61,7 @@ export class GroupInfo extends Info {
         super(owner);
         this.groupType.options = { team: "Team", division: "Division", company: "Company", vendor: "Vendor" };
     }
-    public groupType = new $String(this);
+    public groupType = $ivy<$String>($String, this);
 
     get displayValue(): any {
         return this.groupType.options[this.groupType.value];
@@ -113,9 +113,9 @@ export abstract class Contact extends $Persistent {
             this.description.value : (this.contactType.options[this.contactType.value])) + ")";
     }
 
-    public preferred = new $Boolean(this);
-    public contactType = new $String(this);
-    public description = new $String(this);
+    public preferred = $ivy<$Boolean>($Boolean, this);
+    public contactType = $ivy<$String>($String, this);
+    public description = $ivy<$String>($String, this);
 }
 
 export class Email extends Contact {
@@ -128,7 +128,7 @@ export class Email extends Contact {
         return "fa-envelope";
     }
 
-    public address = new $String(this);
+    public address = $ivy<$String>($String, this);
 
     get displayValue(): any {
         return this.address.value + this.desc();
@@ -145,7 +145,7 @@ export class Phone extends Contact {
         return "fa-phone";
     }
 
-    public number = new $String(this);
+    public number = $ivy<$String>($String, this);
 
     get displayValue(): any {
         return this.number.value + " (" +
@@ -168,11 +168,11 @@ export class Address extends Contact {
         return this.city.value + ", " + this.state.value + "  " + this.zip.value + " " + " (" +
             this.contactType.options[this.contactType.value] + ")";
     }
-    public street1 = new $String(this);
-    public street2 = new $String(this);
-    public city = new $String(this);
-    public state = new $String(this);
-    public zip = new $String(this);
+    public street1 = $ivy<$String>($String, this);
+    public street2 = $ivy<$String>($String, this);
+    public city = $ivy<$String>($String, this);
+    public state = $ivy<$String>($String, this);
+    public zip = $ivy<$String>($String, this);
 }
 
 export class ContactCollection extends $TypedCollection<Contact> {

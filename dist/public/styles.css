@@ -151,6 +151,10 @@ body{
 }
 
 .level-3 {
+    font-weight: normal;
+}
+
+.level-3 {
     margin-left: 5px;
 }
 .level-3.control {
