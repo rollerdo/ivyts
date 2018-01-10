@@ -13,6 +13,9 @@ export function $app() {
 export function $ivy<T extends $Property>(c: { new(owner?: $Property): T }, owner?: $Property): T {
     const obj: T = new c(owner);
     obj.fire("created");
+    if (owner) {
+        owner.fire({type: "propertyCreated", target: obj});
+    }
     return obj;
 }
 
@@ -349,12 +352,16 @@ export class ViewCollection extends $TypedCollection<View> {
 export abstract class $Object extends $Complex {
 
     protected _props: $Property[];
+    protected _init: boolean = true;
+    protected get props(): $Property[] {
+        if (this._init) {
+            this.initProperties();
+            this._init = false;
+        }
+        return this._props;
+    }
 
     private _names = {};
-
-    public byName(n): $Property {
-        return this._names[n] as $Property;
-    }
 
     public initProperties(): void {
         this._props = [];
@@ -375,19 +382,24 @@ export abstract class $Object extends $Complex {
         }
     }
 
+    public get propertyNames() {
+        return this._names;
+    }
+
     public get count(): number {
-        return this._props.length;
+        return this.props.length;
     }
 
     public forEach(func: forEachFunc): void {
         const count = this.count;
+        const p = this.props;
         for (let i: number = 0; i < count; i++) {
-            func.call(this, this._props[i], i);
+            func.call(this, p[i], i);
         }
     }
 
     public toArray(): $Property[] {
-        return this._props;
+        return this.props;
     }
 
     protected constructor(owner?: $Complex) {
@@ -395,10 +407,14 @@ export abstract class $Object extends $Complex {
 
         // Must be done after properties from all descendent classes have been added.
         this.on("created", (event) => {
+//            this.initProperties();
+        });
+
+        this.on("propertyCreated", (event) => {
             this.initProperties();
         });
 
-        this.on("propertyChanged", function (event) {
+        this.on("propertyChanged", (event) => {
             this.refreshViews();
             if (this.owner) {
                 this.owner.fire({ type: "propertyChanged", target: this });

@@ -647,7 +647,6 @@ export class PropertyGroup extends ControlView {
 
     protected createControl() {
         const _inst = $ivy<DivLabel>(DivLabel, this);
-        const _inst2 = $ivy<Div>(Div);
         _inst.className = "control";
         _inst.classList.add("control");
         this.heading.appendChild(_inst);
